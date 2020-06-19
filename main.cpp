@@ -22,4 +22,12 @@ int main (){
     d.shuffle();
     cout << "d[0]: " << d[0]->getValue() << "\td[1]: " << d[1]->getValue() << "\td[2]: " << d[2]->getValue() << endl;
 
+    rsc::Vect2f v1;
+    rsc::Vect2f v2(1,1);
+    rsc::Vect2f v3 = v1 + v2;
+
+    cout<<"v1 x y :"<<v1.x<<" "<<v1.y<<endl;
+    cout<<"v2 x y :"<<v2.x<<" "<<v2.y<<endl;
+    cout<<"v3 x y :"<<v3.x<<" "<<v3.y<<endl;
+
 }
