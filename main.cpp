@@ -6,6 +6,7 @@ using namespace std;
 
 int main (){
     srand(time(0));
+    cout << "\n\n\n____________________________________________________________________________________" << endl;
     cout << "North: " << rsc::North << "\tEast: " << rsc::East << "\tSouth: " << rsc::South << "\tWest: " << rsc::West << endl;
 
     rsc::Card c1;
@@ -34,5 +35,16 @@ int main (){
 
     cout << "v1: " << v1 << "\tv2: " << v2 << "\tv3: " << v3 << endl;
     cout << "v4: " << v4 << endl;
+
+    rsc::Pawn_2i p1;
+    cout << p1.getPosition() << endl;
+
+    rsc::Pawn<int> p2;
+    cout << p2.getPosition() << endl;
+
+    p1.move(rsc::Vect2i(10,5));
+    p2.move(5);
+    cout << p1.getPosition() << endl;
+    cout << p2.getPosition() << endl;
 
 }

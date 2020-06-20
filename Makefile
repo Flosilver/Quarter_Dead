@@ -7,7 +7,10 @@ main.o: main.cpp
 clean:
 	rm -f *.o
 
-vclean: clean
+mrproper: clean
 	rm -f main
 
-remake: vclean main
+remake: mrproper main
+
+rerun: remake
+	./main
