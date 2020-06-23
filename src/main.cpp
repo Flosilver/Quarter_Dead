@@ -2,6 +2,8 @@
 #include <iostream>
 #include <memory>
 
+#include "Map.hpp"
+
 using namespace std;
 
 int main (){
@@ -47,4 +49,9 @@ int main (){
     cout << p1.getPosition() << endl;
     cout << p2.getPosition() << endl;
 
+    Map m;
+    m.print();
+
+    Map m1(5);
+    m1.print();
 }

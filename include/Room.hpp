@@ -1,6 +1,7 @@
 #ifndef ROOM_HPP
 #define ROOM_HPP
 
+#include <Rosace.hpp>
 
 class Room
 {
@@ -20,6 +21,8 @@ class Room
         /* Accesseurs */
         const int& getType() const;
         const bool& isVisited() const;
+
+        /* Methodes */
         virtual void visite() = 0;
 };
 
