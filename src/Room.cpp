@@ -1,7 +1,7 @@
 #include "Room.hpp"
 
 Room::Room(){
-    type = 0;
+    type = room_t::ROOM;
 }
 
 Room::Room(int t){
@@ -28,4 +28,9 @@ const int& Room::getType() const{
 
 const bool& Room::isVisited() const{
     return visited;
+}
+
+/* Methode called when a Joueur visite a Room*/
+void Room::activate(Joueur& j){
+    visited = true;
 }

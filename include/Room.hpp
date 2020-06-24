@@ -3,15 +3,18 @@
 
 #include <Rosace.hpp>
 
+#include "Joueur.hpp"
+
 class Room
 {
     protected:
         int type;
         bool visited = false;
 
+        Room(int t);    // reserved for constructors of classes which herits from Room
+
     public:
         Room();
-        Room(int t);
         Room(const Room& r);
         ~Room();
 
@@ -23,7 +26,7 @@ class Room
         const bool& isVisited() const;
 
         /* Methodes */
-        virtual void visite() = 0;
+        void activate(Joueur& j);
 };
 
 

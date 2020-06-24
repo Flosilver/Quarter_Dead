@@ -1,7 +1,7 @@
 #ifndef JOUEUR_HPP
 #define JOUEUR_HPP
 
-#include <Rosace.hpp>
+#include "config.hpp"
 
 using namespace rsc;
 
@@ -10,11 +10,14 @@ class Joueur : public Player
     protected:
         int hp;
         int agility;
+        int role;
+
+        int nbChauss;
+        int nbMediKit;
 
     public:
         Joueur();
-        Joueur(std::string n, int aDir, int aHp);
-        Joueur(const Joueur& j);
+        Joueur(std::string n, int aDir);
         ~Joueur();
 
         /* Operator */
@@ -22,9 +25,14 @@ class Joueur : public Player
 
         /* Accesseurs */
         const int& getHP() const;
+        const int& getAgility() const;
+        const int& getRole() const;
+        const bool isAlive() const;
 
         /* Methodes */
-        void inflictDMG(int dmg);
+        void receiveDMG(int dmg);
+        void giveRole(int r);
+        void visite(sp_Room& spr);
 };
 
 #endif

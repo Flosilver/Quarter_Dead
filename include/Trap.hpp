@@ -1,12 +1,14 @@
 #ifndef TRAP_HPP
 #define TRAP_HPP
 
-#include "Room.hpp"
+#include "config.hpp"
 
+/* Trap is Room of type 1 */
 class Trap : public Room
 {
     protected:
         int dmg;
+        int element;
 
     public:
         Trap();
@@ -20,7 +22,7 @@ class Trap : public Room
         /* Accesseurs */
 
         /* Methodes */
-        void visite();
+        void activate(Joueur& j);
 };
 
 #endif

@@ -1,17 +1,10 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include <memory>
-#include <vector>
-#include <Rosace.hpp>
-
+#include "config.hpp"
 #include "Room.hpp"
 
 using namespace std;
-
-typedef shared_ptr<Room> sp_Room;
-typedef vector<sp_Room> vsp_Room;
-typedef vector<vsp_Room> map_t;
 
 class Map
 {
