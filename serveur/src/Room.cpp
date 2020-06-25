@@ -34,3 +34,15 @@ const bool& Room::isVisited() const{
 void Room::activate(Joueur& j){
     visited = true;
 }
+
+void Room::receiveShoe(){
+    nbChauss++;
+}
+
+const bool Room::giveShoe(){
+    if(nbChauss > 0){
+        nbChauss--;
+        return true;
+    }
+    return false;
+}

@@ -1,13 +1,13 @@
 #include "Trap.hpp"
 
 Trap::Trap(): Room(room_t::TRAP){
-    dmg = 0;
-    element = rand() % NB_ELEM;
+    dmg = 5 + rand() % 7;
+    element = rand() % NB_ELEMENT;
 }
 
 Trap::Trap(int d): Room(room_t::TRAP){
     dmg = d;
-    element = rand() % NB_ELEM;
+    element = rand() % NB_ELEMENT;
 }
 
 Trap::Trap(const Trap& t): Room(room_t::TRAP){
@@ -25,9 +25,17 @@ Trap& Trap::operator=(const Trap& t){
     return *this;
 }
 
+const int& Trap::getDMG() const{
+    return dmg;
+}
+
+const int& Trap::getElement() const{
+    return element;
+}
+
 /* Methode called when a Joueur visite a Room*/
 void Trap::activate(Joueur& j){
-    int haz =0;
+    int haz = 100;
     switch (j.getRole())
     {
         case role_t::Acrobate :

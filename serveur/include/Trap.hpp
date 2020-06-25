@@ -22,6 +22,8 @@ class Trap : public Room
         Trap& operator=(const Trap& t);
 
         /* Accesseurs */
+        const int& getDMG() const;
+        const int& getElement() const;
 
         /* Methodes */
         void activate(Joueur& j);

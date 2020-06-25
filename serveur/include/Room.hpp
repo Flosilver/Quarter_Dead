@@ -12,6 +12,8 @@ class Room
         int type;
         bool visited = false;
 
+        int nbChauss = 0;
+
         Room(int t);    // reserved for constructors of classes which herits from Room
 
     public:
@@ -28,6 +30,8 @@ class Room
 
         /* Methodes */
         void activate(Joueur& j);
+        void receiveShoe();
+        const bool giveShoe();
 };
 
 

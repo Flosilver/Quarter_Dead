@@ -2,7 +2,12 @@
 
 Joueur::Joueur(): rsc::Player()
 {
+    hp = 0;
+    agility = 0;
+    role = -1;
+
     nbChauss = 2;
+    nbMaxChauss = 2;
     nbMediKit = 0;
 }
 
@@ -58,6 +63,7 @@ void Joueur::giveRole(int r){
             role = r;
 
             nbChauss += 2;
+            nbMaxChauss = 50;
 
             break;
 
@@ -97,6 +103,7 @@ void Joueur::giveRole(int r){
             role = r;
 
             nbChauss -= 2;
+            nbMaxChauss = 1;
 
             break;
 
@@ -124,4 +131,21 @@ void Joueur::visite(sp_Room& spr){
             // SHIT TODO
         }
     }*/
+}
+
+const bool Joueur::throwShoe(sp_Room& spr){
+    if (nbChauss > 0){
+        nbChauss--;
+        spr->receiveShoe();
+        return true;
+    }
+    return false;
+}
+
+const bool Joueur::pickUpShoe(sp_Room& spr){
+    if ( spr->giveShoe() && ((nbChauss + 1) <= nbMaxChauss) ){
+        nbChauss++;
+        return true;
+    }
+    return false;
 }

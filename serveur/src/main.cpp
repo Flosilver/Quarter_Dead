@@ -1,14 +1,4 @@
-#include <Rosace.hpp>
-#include <iostream>
-#include <memory>
-
-#include "config.hpp"
-#include "Map.hpp"
-#include "Room.hpp"
-#include "Trap.hpp"
-#include "Fatal.hpp"
-#include "Goal.hpp"
-#include "Joueur.hpp"
+#include "Quarter_Dead.hpp"
 
 using namespace std;
 
@@ -26,4 +16,22 @@ int main (){
     cout << "\n room [1][1] : type=" << m2[1][1]->getType() << endl;
     m2[1][1] = make_shared<Room>(Trap(5));
     cout << "\n room [1][1] : type=" << m2[1][1]->getType() << endl;
+
+    Trap t1;
+    cout << "t1: " << t1.getType() << " " << t1.getDMG() << " " << t1.getElement() << endl;
+    Trap t2;
+    Trap t3;
+    Trap t4;
+    Trap t5;
+    cout << t1.getElement() << " " << t2.getElement() << " " << t3.getElement() << " " << t4.getElement() << " " << t5.getElement() << endl;
+
+
+    //rsc::Game::initialize_server();
+    Quarter_Dead game;
+    cout << "game created" << endl;
+    game.generateMaze();
+    cout << "map generated" << endl;
+    for (int i=0 ; i<NB_ETAGES ; i++){
+        game.getEtage(i).print();
+    }
 }

@@ -14,6 +14,7 @@ class Joueur : public Player
         int role;
 
         int nbChauss;
+        int nbMaxChauss;
         int nbMediKit;
 
     public:
@@ -34,6 +35,8 @@ class Joueur : public Player
         void receiveDMG(int dmg);
         void giveRole(int r);
         void visite(sp_Room& spr);
+        const bool throwShoe(sp_Room& spr);
+        const bool pickUpShoe(sp_Room& spr);
 };
 
 #endif
