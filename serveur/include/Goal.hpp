@@ -2,6 +2,8 @@
 #define GOAL_HPP
 
 #include "config.hpp"
+#include "Room.hpp"
+#include "Joueur.hpp"
 
 class Goal : public Room
 {

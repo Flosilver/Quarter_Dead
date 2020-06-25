@@ -2,6 +2,8 @@
 #define TRAP_HPP
 
 #include "config.hpp"
+#include "Room.hpp"
+#include "Joueur.hpp"
 
 /* Trap is Room of type 1 */
 class Trap : public Room

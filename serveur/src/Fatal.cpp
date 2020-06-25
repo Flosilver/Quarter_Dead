@@ -10,6 +10,8 @@ Fatal::~Fatal(){}
 
 Fatal& Fatal::operator=(const Fatal& f){
     visited = f.visited;
+
+    return *this;
 }
 
 void Fatal::activate(Joueur& j){

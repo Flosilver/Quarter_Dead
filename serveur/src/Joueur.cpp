@@ -27,12 +27,16 @@ const int& Joueur::getHP() const{
     return hp;
 }
 
+const int& Joueur::getAgility() const{
+    return agility;
+}
+
 const int& Joueur::getRole() const{
     return role;
 }
 
 const bool Joueur::isAlive() const{
-    return hp <= 0;
+    return hp > 0;
 }
 
 void Joueur::receiveDMG(int dmg){

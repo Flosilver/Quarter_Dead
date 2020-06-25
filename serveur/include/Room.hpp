@@ -2,8 +2,9 @@
 #define ROOM_HPP
 
 #include <Rosace.hpp>
+#include "config.hpp"
 
-#include "Joueur.hpp"
+class Joueur;
 
 class Room
 {

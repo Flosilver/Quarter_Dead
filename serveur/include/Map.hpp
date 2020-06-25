@@ -20,6 +20,7 @@ class Map
 
         /* Operators */
         Map& operator=(const Map& m);
+        vsp_Room& operator[](size_t i);
 
         /* Accesseurs */
 

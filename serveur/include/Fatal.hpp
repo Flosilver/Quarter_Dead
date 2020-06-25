@@ -2,6 +2,8 @@
 #define FATAL_HPP
 
 #include "config.hpp"
+#include "Room.hpp"
+#include "Joueur.hpp"
 
 class Fatal : public Room
 {

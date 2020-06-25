@@ -2,6 +2,7 @@
 #define JOUEUR_HPP
 
 #include "config.hpp"
+#include "Room.hpp"
 
 using namespace rsc;
 

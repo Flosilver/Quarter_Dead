@@ -11,7 +11,8 @@
 
 #include <Rosace.hpp>
 
-#include "Room.hpp"
+//#include "Room.hpp"
+class Room;
 
 using namespace std;
 
@@ -29,6 +30,8 @@ typedef vector<vsp_Room> map_t;
 #define HP_L 30
 
 #define NB_ELEM 5
+
+#define MAP_SIZE 5
 
 
 

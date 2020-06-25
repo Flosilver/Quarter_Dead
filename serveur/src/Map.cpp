@@ -47,8 +47,12 @@ Map& Map::operator=(const Map& m){
     return *this;
 }
 
+vsp_Room& Map::operator[](size_t i){
+    return map[i];
+}
+
 void Map::print() const{
-    cout << "/nMap:\nsize: " << size << endl;
+    cout << "\nMap:\nsize: " << size << endl;
     for (size_t i=0 ; i<size ; i++){
         for (size_t j=0 ; j<size ; j++){
             cout << map[i][j]->getType() << "\t";
