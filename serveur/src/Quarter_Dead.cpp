@@ -18,7 +18,7 @@ const Map& Quarter_Dead::getEtage(int i) const{
 
 void Quarter_Dead::generateMaze(){
     for (int i=0 ; i<NB_ETAGES ; i++){
-        spawns[i] = Vect2i(MAP_SIZE/2 + 1, MAP_SIZE/2 + 1);
+        spawns[i] = Vect2i(MAP_SIZE/2, MAP_SIZE/2);
     }
 
     int haz;
@@ -26,6 +26,7 @@ void Quarter_Dead::generateMaze(){
     Vect2i vGoal;
     for (int i=0 ; i<NB_ETAGES ; i++){
         cout << "----\netage " << i << endl;
+        goal = false;
 
         maze[i] = Map(MAP_SIZE);
 
@@ -54,6 +55,7 @@ void Quarter_Dead::generateMaze(){
                     case room_t::GOAL :
                         maze[i][j][k] = make_shared<Room>(Goal());
                         vGoal = Vect2i(j,k);
+                        goal = true;
                         break;                  
                     
                     default:
@@ -68,18 +70,19 @@ void Quarter_Dead::generateMaze(){
         /* placement du spawn de l'étage i */
         int test = spawns[i].x - vGoal.x < 0 ? -(spawns[i].x - vGoal.x) : spawns[i].x - vGoal.x;
         cout << "test: " << test << endl;
-        while (test <= 2){
+        while (test < 2){
             spawns[i].x = (spawns[i].x + 1) % MAP_SIZE;
             test = spawns[i].x - vGoal.x < 0 ? -(spawns[i].x - vGoal.x) : spawns[i].x - vGoal.x;
         }
         cout << "test: " << test << endl;
         test = spawns[i].y - vGoal.y < 0 ? -(spawns[i].y - vGoal.y) : spawns[i].y - vGoal.y;
         cout << "test: " << test << endl;
-        while (test <= 2){
+        while (test < 2){
             spawns[i].y = (spawns[i].y + 1) % MAP_SIZE;
             test = spawns[i].y - vGoal.y < 0 ? -(spawns[i].y - vGoal.y) : spawns[i].y - vGoal.y;
         }
         cout << "test: " << test << endl;
+        cout << "spawn étage i: " << spawns[i] << endl;
     }
     cout << "done" << endl;
 }
