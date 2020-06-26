@@ -1,11 +1,50 @@
 @startuml UMLseq
 
+footer %page% of %lastpage%
+
 participant North order 0
 participant East order 10
 participant South order 20
 participant West order 30
 participant Serv order 40
 
+== Connection ==
 
+North -> Serv : requête de connection : C0
+Serv -> North : requête acceptée : c0y
+|||
+East -> Serv : requête de connection : C1
+Serv -> North : requête accesptée : c1y
+Serv -> East : requête accesptée : c1y
+|||
+South -> Serv : requête de connection : C2
+Serv -> North : requête accesptée : c2y
+Serv -> East : requête accesptée : c2y
+Serv -> South : requête accesptée : c2y
+|||
+North -> Serv : requête de connection : C0
+Serv -> North : requête refusée : c0n
+|||
+West -> Serv : requête de connection : C3
+Serv -> North : requête accesptée : c3y
+Serv -> East : requête accesptée : c3y
+Serv -> South : requête accesptée : c3y
+Serv -> West : requête accesptée : c3y
+|||
+hnote over Serv : Generation du terrain
+hnote over Serv : Melange des rôles pour la distribution
+Serv -> North : distribution du rôle : r<role_id>
+Serv -> East : distribution du rôle : r<role_id>
+Serv -> South : distribution du rôle : r<role_id>
+Serv -> West : distribution du rôle : r<role_id>d
+hnote over Serv : changement d'état
+
+newpage
+
+footer %page% of %lastpage%
+
+== Initialisation du Jeu ==
+
+North -> Serv : je veux rentrer dans une salle
 
 @enduml
