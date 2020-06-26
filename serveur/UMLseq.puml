@@ -1,0 +1,11 @@
+@startuml UMLseq
+
+participant North order 0
+participant East order 10
+participant South order 20
+participant West order 30
+participant Serv order 40
+
+
+
+@enduml
