@@ -28,10 +28,13 @@ int main (){
 
     //rsc::Game::initialize_server();
     Quarter_Dead game;
-    cout << "game created" << endl;
+    cout << "---game created" << endl;
     game.generateMaze();
-    cout << "map generated" << endl;
+    cout << "---map generated" << endl;
     for (int i=0 ; i<NB_ETAGES ; i++){
         game.getEtage(i).print();
     }
+    cout << "---printed" << endl;
+
+    return 0;
 }
