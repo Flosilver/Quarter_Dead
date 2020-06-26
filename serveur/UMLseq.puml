@@ -45,6 +45,19 @@ footer %page% of %lastpage%
 
 == Initialisation du Jeu ==
 
-North -> Serv : je veux rentrer dans une salle
+North -> Serv : ouvrir une porte : O0<dir de la porte>
+note left
+dir est la direction de la porte
+Nord:0, Est:1, Sud:2, Ouest:3
+endnote
+hnote over Serv : ouverture possible
+Serv -> North : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
+note right
+nouv_salle est la salle
+dont le joueur demande 
+l'ouverture
+endnote
+hnote over Serv : ouverture impossible
+Serv -> North : ouverture refusée : on
 
 @enduml
