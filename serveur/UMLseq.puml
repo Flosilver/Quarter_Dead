@@ -43,7 +43,7 @@ newpage
 
 footer %page% of %lastpage%
 
-== Initialisation du Jeu ==
+== Jeu ==
 
 North -> Serv : ouvrir une porte : O0<dir de la porte>
 note left
@@ -99,6 +99,23 @@ la salle existe
 &&
 la salle est ouverte
 endnote
-Serv North
+Serv -> North : déplacement accepté : ey2<salle.x><salle.y>
+Serv -> East : déplacement accepté : ey2<salle.x><salle.y>
+Serv -> South : déplacement accepté : ey2<salle.x><salle.y>
+Serv -> West : déplacement accepté : ey2<salle.x><salle.y>
+|||
+
+South -> Serv : est dans une salle : I2
+note left
+Indique au serveur que le joueur 2 (South)
+est entré dans une salle et lance un test
+sur la salle.
+endnote
+hnote over Serv : check sur la salle
+Serv -> North : update données : i2<typde de room><hp update>
+Serv -> Earth : update données : i2<typde de room><hp update>
+Serv -> South : update données : i2<typde de room><hp update>
+Serv -> West : update données : i2<typde de room><hp update>
+
 
 @enduml
