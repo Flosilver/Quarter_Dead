@@ -52,6 +52,9 @@ Nord:0, Est:1, Sud:2, Ouest:3
 endnote
 hnote over Serv : ouverture possible
 Serv -> North : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
+Serv -> East : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
+Serv -> South : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
+Serv -> West : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
 note right
 nouv_salle est la salle
 dont le joueur demande 
@@ -59,5 +62,43 @@ l'ouverture
 endnote
 hnote over Serv : ouverture impossible
 Serv -> North : ouverture refusée : on
+|||
+
+East -> Serv : lancer une chaussure : L1<dir de la salle>
+note left
+dir est la direction de la salle
+où le joueur lance une chausssure
+Nord:0, East:1, South:2, West:3
+endnote
+hnote over Serv
+la salle existe
+&&
+la salle est ouverte
+endnote
+Serv -> North : lancé accepté : ly1<salle.x><salle.y><dir>
+Serv -> East : lancé accepté : ly1<salle.x><salle.y><dir>
+Serv -> South : lancé accepté : ly1<salle.x><salle.y><dir>
+Serv -> West : lancé accepté : ly1<salle.x><salle.y><dir>
+hnote over Serv
+la salle n'existe pas
+||
+la salle est fermée
+endnote
+Serv -> East : lancé refusé : ln
+note right : c'est un "L" minuscule ;)
+|||
+
+South -> Serv : entrer dans une salle : E<dir de la salle>
+note left
+dir est la direction de la salle
+où le joueur souhaite entrer
+Nord:0, East:1, South:2, West:3
+endnote
+hnote over Serv
+la salle existe
+&&
+la salle est ouverte
+endnote
+Serv North
 
 @enduml
