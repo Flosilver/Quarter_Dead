@@ -36,7 +36,7 @@ typedef vector<vsp_Room> map_t;
 #define MAP_SIZE 5
 #define NB_ETAGES 3
 
-#define SEUIL_TRAP 45
+#define SEUIL_TRAP 75
 #define SEUIL_FATAL 25
 #define SEUIL_GOAL 10
 

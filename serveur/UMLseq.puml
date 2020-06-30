@@ -62,6 +62,7 @@ l'ouverture
 endnote
 hnote over Serv : ouverture impossible
 Serv -> North : ouverture refusée : on
+...
 |||
 
 East -> Serv : lancer une chaussure : L1<dir de la salle>
@@ -72,7 +73,7 @@ Nord:0, East:1, South:2, West:3
 endnote
 hnote over Serv
 la salle existe
-&&
+et
 la salle est ouverte
 endnote
 Serv -> North : lancé accepté : ly1<salle.x><salle.y><dir>
@@ -81,11 +82,12 @@ Serv -> South : lancé accepté : ly1<salle.x><salle.y><dir>
 Serv -> West : lancé accepté : ly1<salle.x><salle.y><dir>
 hnote over Serv
 la salle n'existe pas
-||
+ou
 la salle est fermée
 endnote
 Serv -> East : lancé refusé : ln
 note right : c'est un "L" minuscule ;)
+...
 |||
 
 South -> Serv : entrer dans une salle : E<dir de la salle>
@@ -96,13 +98,20 @@ Nord:0, East:1, South:2, West:3
 endnote
 hnote over Serv
 la salle existe
-&&
+et
 la salle est ouverte
 endnote
 Serv -> North : déplacement accepté : ey2<salle.x><salle.y>
 Serv -> East : déplacement accepté : ey2<salle.x><salle.y>
 Serv -> South : déplacement accepté : ey2<salle.x><salle.y>
 Serv -> West : déplacement accepté : ey2<salle.x><salle.y>
+hnote over Serv
+la salle n'existe pas
+ou
+la salle est fermée
+endnote
+Serv -> South : déplacement refusé : en
+...
 |||
 
 South -> Serv : est dans une salle : I2
@@ -113,7 +122,7 @@ sur la salle.
 endnote
 hnote over Serv : check sur la salle
 Serv -> North : update données : i2<typde de room><hp update>
-Serv -> Earth : update données : i2<typde de room><hp update>
+Serv -> East : update données : i2<typde de room><hp update>
 Serv -> South : update données : i2<typde de room><hp update>
 Serv -> West : update données : i2<typde de room><hp update>
 
