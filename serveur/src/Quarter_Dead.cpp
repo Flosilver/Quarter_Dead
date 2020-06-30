@@ -1,7 +1,11 @@
 #include "Quarter_Dead.hpp"
 
 Quarter_Dead::Quarter_Dead(): rsc::Game(){
-    
+    for (int i=0 ; i<NB_J_MAX ; i++){
+        players[i] = make_shared<Player>(Joueur(i));
+    }
+
+    setState(CONNECTION);
 }
 
 Quarter_Dead::~Quarter_Dead(){
@@ -9,12 +13,14 @@ Quarter_Dead::~Quarter_Dead(){
 }
 
 const Map& Quarter_Dead::getEtage(int i) const{
+    /* anti abruti-man */
     if ( i < 0 ){
         return maze[0];
     }
     if ( i >= NB_ETAGES ){
         return maze[NB_ETAGES-1];
     }
+    /* comportement logique */
     return maze[i];
 }
 
@@ -69,7 +75,7 @@ void Quarter_Dead::generateMaze(){
 
                     case room_t::GOAL :
                         haz = rand() % 101;
-                        if ( haz <= (i+1) * SEUIL_GOAL ){
+                        if ( haz <= SEUIL_GOAL ){
                             maze[i][j][k] = make_shared<Room>(Goal());
                             vGoal = Vect2i(j,k);
                             goal = true;
@@ -118,6 +124,66 @@ void Quarter_Dead::generateMaze(){
     cout << "done" << endl;
 }
 
+const std::string Quarter_Dead::generationMess(int etage) const{
+    std::string res("");
+    for (int i=0 ; i<MAP_SIZE*MAP_SIZE ; i++){
+        // TODO
+    }
+}
+
 void Quarter_Dead::handleIncomingMessage(){
-    // TODO
+    cout << "état actuel: " << state << endl;
+
+    int dir;
+    int* listRooms;
+
+    switch (state){
+        case CONNECTION:
+            // état initial, on attend que 4 joueurs soient connectés
+			if (recMess[0]=='C')
+			{
+				dir = recMess[1]-'0'; // ascii to int
+				if (!isConnected(dir))
+				{
+					nbConnectes++;
+					connect(dir);
+				}
+
+				// Tout le monde est connecté, on envoie plein de choses
+				// aux interfaces graphiques.
+				//	la manche
+				//	le score, nul
+				//	on reset les pieges
+				//	le nombre de votants=4 (tous les joueurs)
+				//	personne n'a encore voté
+				//	tout le monde est dans la grotte
+				if (nbConnectes==4)
+				{
+                    cout << "Tout le monde est là! On passe au jeu." << endl;
+                    setState(GAME);
+                    generateMaze();
+                    for (int i=0 ; i<NB_ETAGES ; i++){
+                        listRooms = getEtage(i).getRoomList();
+                        // TODO: message de génération par étage
+                        
+                    }
+
+                }
+            }
+            break;
+
+        case GAME:
+
+            break;
+
+        case END:
+
+            break;
+
+        default:
+
+            break;
+    }
+    
+    delete[] listRooms;
 }

@@ -38,6 +38,8 @@ typedef vector<vsp_Room> map_t;
 
 #define SEUIL_TRAP 75
 #define SEUIL_FATAL 25
-#define SEUIL_GOAL 10
+#define SEUIL_GOAL 20
+
+#define SERVER_PORT 4242
 
 #endif

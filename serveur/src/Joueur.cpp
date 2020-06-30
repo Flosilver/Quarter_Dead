@@ -11,14 +11,13 @@ Joueur::Joueur(): rsc::Player()
     nbMediKit = 0;
 }
 
-Joueur::Joueur(std::string n, int aDir): rsc::Player(n, aDir){
+Joueur::Joueur(int aDir): rsc::Player(aDir){
     // TODO
 }
 
 Joueur::~Joueur(){}
 
 Joueur& Joueur::operator=(const Joueur& j){
-    name = j.name;
     dir = j.dir;
 
     hp = j.hp;

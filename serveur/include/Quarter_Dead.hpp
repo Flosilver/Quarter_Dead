@@ -26,6 +26,7 @@ class Quarter_Dead : public rsc::Game
 
         /* Methodes */
         void generateMaze();
+        const std::string generationMess(int etage) const;
 
         /* Methodes de Game */
         void handleIncomingMessage();

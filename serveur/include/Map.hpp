@@ -26,6 +26,7 @@ class Map
 
         /* Méthodes */
         void print() const;
+        int* getRoomList() const;
 };
 
 #endif

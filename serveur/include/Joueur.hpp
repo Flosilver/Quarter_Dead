@@ -19,7 +19,7 @@ class Joueur : public Player
 
     public:
         Joueur();
-        Joueur(std::string n, int aDir);
+        Joueur(int aDir);
         ~Joueur();
 
         /* Operator */
