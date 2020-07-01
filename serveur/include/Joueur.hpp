@@ -17,6 +17,8 @@ class Joueur : public Player
         int nbMaxChauss;
         int nbMediKit;
 
+        Pawn_2i pawn;
+
     public:
         Joueur();
         Joueur(int aDir);
@@ -37,6 +39,11 @@ class Joueur : public Player
         void visite(sp_Room& spr);
         const bool throwShoe(sp_Room& spr);
         const bool pickUpShoe(sp_Room& spr);
+
+        void movePawn(const Vect2i& v);
+        void movePawnTo(const Vect2i& v);
 };
+
+typedef std::shared_ptr<Joueur> sp_Joueur;
 
 #endif

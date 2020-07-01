@@ -9,10 +9,18 @@ Joueur::Joueur(): rsc::Player()
     nbChauss = 2;
     nbMaxChauss = 2;
     nbMediKit = 0;
+
+    pawn = Pawn_2i(Vect2i(-1,-1));
 }
 
 Joueur::Joueur(int aDir): rsc::Player(aDir){
-    // TODO
+    hp = 0;
+    agility = 0;
+    role = -1;
+
+    nbChauss = 2;
+    nbMaxChauss = 2;
+    nbMediKit = 0;
 }
 
 Joueur::~Joueur(){}
@@ -23,6 +31,10 @@ Joueur& Joueur::operator=(const Joueur& j){
     hp = j.hp;
     agility = j.agility;
     role = j.role;
+
+    nbChauss = j.nbChauss;
+    nbMaxChauss = j.nbMaxChauss;
+    nbMediKit = j.nbMediKit;
 
     return *this;
 }
@@ -147,4 +159,12 @@ const bool Joueur::pickUpShoe(sp_Room& spr){
         return true;
     }
     return false;
+}
+
+void Joueur::movePawn(const Vect2i& v){
+    pawn.move(v);
+}
+
+void Joueur::movePawnTo(const Vect2i& v){
+    pawn.moveTo(v);
 }

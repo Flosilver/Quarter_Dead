@@ -2,9 +2,9 @@
 
 Quarter_Dead::Quarter_Dead(): rsc::Game(){
     for (int i=0 ; i<NB_J_MAX ; i++){
-        players[i] = make_shared<Player>(Joueur(i));
+        players[i] = make_shared<Joueur>(Joueur(i));
     }
-
+    
     setState(CONNECTION);
 }
 
@@ -22,6 +22,16 @@ const Map& Quarter_Dead::getEtage(int i) const{
     }
     /* comportement logique */
     return maze[i];
+}
+
+const sp_Joueur Quarter_Dead::getPlayer(int dir) const {
+    for (const sp_Joueur& spp : players){
+		if (spp->getDir() == dir){
+			return spp;
+		}
+	}
+	return make_shared<Joueur>();
+	// TODO: gestion d'erreur
 }
 
 void Quarter_Dead::generateMaze(){
@@ -124,18 +134,40 @@ void Quarter_Dead::generateMaze(){
     cout << "done" << endl;
 }
 
-const std::string Quarter_Dead::generationMess(int etage) const{
+const std::string Quarter_Dead::mapMess(int etage) const{
     std::string res("");
+    int temp;
+    char ctemp[200];
+    int* listR = getEtage(etage).getRoomList(); // new int[] -> delete[]
     for (int i=0 ; i<MAP_SIZE*MAP_SIZE ; i++){
-        // TODO
+        temp = listR[i];
+        sprintf(ctemp,"%d",temp);
+        res += string(ctemp);
     }
+    delete[] listR;
+    //const char* mess = res.c_str();
+    //cout << mess << endl;
+    return res;
+}
+
+const bool& Quarter_Dead::isConnected(int dir) const{
+	return players[dir]->isConnected();
+}
+
+void Quarter_Dead::connect(int dir){
+	players[dir]->login();
+}
+
+void Quarter_Dead::disconnect(int dir){
+	players[dir]->logout();
 }
 
 void Quarter_Dead::handleIncomingMessage(){
     cout << "état actuel: " << state << endl;
 
-    int dir;
-    int* listRooms;
+    int dir;        // direction du joueur qui envoie un message
+    int haz;        // variable de random
+    int temp;       // vairiable temporaire
 
     switch (state){
         case CONNECTION:
@@ -151,23 +183,40 @@ void Quarter_Dead::handleIncomingMessage(){
 
 				// Tout le monde est connecté, on envoie plein de choses
 				// aux interfaces graphiques.
-				//	la manche
-				//	le score, nul
-				//	on reset les pieges
-				//	le nombre de votants=4 (tous les joueurs)
-				//	personne n'a encore voté
-				//	tout le monde est dans la grotte
+				// la map complète
+                // le placement des joueurs en fonction de la génération
+                // distribution des rôles
 				if (nbConnectes==4)
 				{
                     cout << "Tout le monde est là! On passe au jeu." << endl;
                     setState(GAME);
                     generateMaze();
+                    // Envoie des salles de chaque etage dans le code des joueurs
                     for (int i=0 ; i<NB_ETAGES ; i++){
-                        listRooms = getEtage(i).getRoomList();
-                        // TODO: message de génération par étage
-                        
+                        sprintf(mess, "g%d%s", i, mapMess(i).c_str());
+                        sendBroadcast(mess);                       
                     }
 
+                    // Placement des pions coté serveur et envoie des position dde spawn coté client
+                    sprintf(mess, "p%d%d", spawns[0].x, spawns[0].y);
+                    sendBroadcast(mess);
+                    for (int i=0 ; i<NB_J_MAX ; i++){
+                        players[i]->movePawnTo(spawns[0]);
+                    }
+
+                    // Distribution des rôles
+                    for (int i=0 ; i<NB_ROLES_JOUABLES ; i++){
+                        // mélange des rôles avant distribution
+                        haz = rand() % NB_ROLES_JOUABLES;
+                        temp = roles[i];
+                        roles[i] = roles[haz];
+                        roles[haz] = temp;
+                    }
+                    sprintf(mess, "r%d%d%d%d%d%d%d%d",0,roles[0],1,roles[1],2,roles[2],3,roles[3]);
+                    sendBroadcast(mess);
+                    for (int i=0 ; i<NB_J_MAX ; i++){
+                        players[i]->giveRole(roles[i]);
+                    }
                 }
             }
             break;
@@ -184,6 +233,4 @@ void Quarter_Dead::handleIncomingMessage(){
 
             break;
     }
-    
-    delete[] listRooms;
 }

@@ -5,12 +5,12 @@ using namespace std;
 int main (){
     srand(time(0));
     cout << "\n\n\n____________________________________________________________________________________" << endl;
-    cout << "North: " << rsc::North << "\tEast: " << rsc::East << "\tSouth: " << rsc::South << "\tWest: " << rsc::West << endl;
 
-    
     rsc::Game::initialize_server();
     Quarter_Dead game;
     game.launch(SERVER_PORT);
+
+    /* tests */
     cout << "---game created" << endl;
     game.generateMaze();
     cout << "---map generated" << endl;
@@ -34,6 +34,20 @@ int main (){
         delete[] listRooms[i];
     }
 
+    cout << endl;
+    string mess1 = game.mapMess(0);
+    cout << mess1 << endl;
+
+    char mess[256];
+    sprintf(mess, "g%d%s", 1, game.mapMess(1).c_str());
+    cout << mess << endl;
+
+    sp_Joueur spj = game.getPlayer(1);
+    cout << spj->getDir() << " " << spj->getRole() << endl;
+    spj->giveRole(3);
+    cout << spj->getRole() << endl;
+
+    /* suite du vrai main */
     /*while (1)
     {
             while (game.game_host_service() > 0)
