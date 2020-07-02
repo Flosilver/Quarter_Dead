@@ -62,3 +62,13 @@ void Map::print() const{
     }
     cout << endl;
 }
+
+int* Map::getRoomList() const{
+    int* list = new int[size*size];
+    for ( size_t i=0 ; i<size ; i++){
+        for ( size_t j=0 ; j<size ; j++){
+            list[i*size+j] = map[i][j]->getType();
+        }
+    }
+    return list;
+}
