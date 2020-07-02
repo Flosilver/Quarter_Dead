@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Porte1.obj-8036b31fb4ec0b5ff663151f1a0dd9fc.mesh"
+
+[deps]
+
+files=[ "res://.import/Porte1.obj-8036b31fb4ec0b5ff663151f1a0dd9fc.mesh" ]
+
+source_file="res://obj/Porte1.obj"
+dest_files=[ "res://.import/Porte1.obj-8036b31fb4ec0b5ff663151f1a0dd9fc.mesh", "res://.import/Porte1.obj-8036b31fb4ec0b5ff663151f1a0dd9fc.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
