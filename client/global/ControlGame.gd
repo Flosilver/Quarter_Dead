@@ -43,12 +43,8 @@ var lOffsetExplo=[
 	[-0.5,-0.5],
 ]
 
-var grotteIndexes=[0,0,0,0,0]
-
 # liste contenant les pointeurs vers les 5 nodes exit crées
 var lExits=[null,null,null,null,null]
-var lGrotteNodes
-var lGems
 var lExplos=[null,null,null,null]
 var campx
 var campy
@@ -72,13 +68,13 @@ func _ready():
 func _networkMessage(mess):
 	print ("_networkMessage=",mess)
 	match mess[0]:
-		'C': # créer un explorateur et le mettre à sa position dans le campement
+		'c': # créer un explorateur et le mettre à sa position en attendant tout le monde
 			var dir=int(mess[1])
 			if global.playersPresent[dir]==0:
 				global.playersPresent[dir]=1
-				var x=lOffsetExplo[dir][0]
-				var y=lOffsetExplo[dir][1]
-				lExplos[dir]=createExplorer(x+campx,y+campy,dir)
+#				var x=lOffsetExplo[dir][0]
+#				var y=lOffsetExplo[dir][1]
+#				lExplos[dir]=createExplorer(x+campx,y+campy,dir)
 
 func _on_ButtonMenu_pressed():
 	var root=get_tree().get_root()
@@ -87,7 +83,7 @@ func _on_ButtonMenu_pressed():
 	root.remove_child(myself)
 	root.add_child(global.controlMenuNode)
 	
-func createTile(x,y,room_num):
+func createRoom(x,y,room_num):
 	# Create a new tile instance
 	var mi=MeshInstance.new()
 	# and translate it to its final position
