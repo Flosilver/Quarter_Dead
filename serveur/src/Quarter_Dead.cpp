@@ -156,10 +156,12 @@ const bool& Quarter_Dead::isConnected(int dir) const{
 
 void Quarter_Dead::connect(int dir){
 	players[dir]->login();
+    nbConnectes++;
 }
 
 void Quarter_Dead::disconnect(int dir){
 	players[dir]->logout();
+    nbConnectes--;
 }
 
 void Quarter_Dead::handleIncomingMessage(){
@@ -177,8 +179,8 @@ void Quarter_Dead::handleIncomingMessage(){
 				dir = recMess[1]-'0'; // ascii to int
 				if (!isConnected(dir))
 				{
-					nbConnectes++;
 					connect(dir);
+                    sprintf(mess, "c%d", dir);
 				}
 
 				// Tout le monde est connecté, on envoie plein de choses

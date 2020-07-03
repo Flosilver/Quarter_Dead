@@ -1,4 +1,4 @@
-EXE := main
+EXE := QD_game
 
 
 SRC_DIR := src
@@ -35,9 +35,9 @@ clean:
 	rm -rf $(OBJ)
 
 mrproper: clean
-	rm -rf main
+	rm -rf $(EXE)
 
-remake: mrproper main
+remake: mrproper $(EXE)
 
 rerun: remake
-	./main
+	./$(EXE)
