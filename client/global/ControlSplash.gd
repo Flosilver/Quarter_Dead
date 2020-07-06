@@ -23,6 +23,7 @@ func _ready():
 	content= f.get_as_text()
 	f.close()
 	global.serverAddress=content.strip_edges()
+#	global.direction = 0
 #	global.serverAddress = "192.168.1.12"
 	print("serverAddress={",global.serverAddress,"}")
 	

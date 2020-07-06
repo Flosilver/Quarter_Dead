@@ -1,4 +1,4 @@
-EXE := QD_game
+EXE := game
 
 
 SRC_DIR := src
@@ -15,6 +15,8 @@ LDFLAGS :=
 ENET_PATH := -L/usr/local/lib
 LIB_ROSACE := -lRosace
 LIB_ENET := -lenet -I/usr/local/include
+LIB_THREAD := -lpthread
+LIBFLAG := $(LIB_ROSACE) $(LIB_ENET) $(ENET_PATH) $(LIB_THREAD)
 
 .PHONY: all clean mrproper remake rerun
 
@@ -23,10 +25,10 @@ all: $(EXE)
 	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 
 $(EXE): $(OBJ)
-	$(CC) $^ -o $@ $(INCLUDE) $(LIB_ROSACE) $(LIB_ENET) $(ENET_PATH)
+	$(CC) $^ -o $@ $(INCLUDE) $(LIBFLAG)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
-	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE) $(LIB_ROSACE) $(LIB_ENET) $(ENET_PATH)
+	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE) $(LIBFLAG)
 	
 $(OBJ_DIR):
 	mkdir $@

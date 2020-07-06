@@ -9,7 +9,8 @@ Quarter_Dead::Quarter_Dead(): rsc::Game(){
 }
 
 Quarter_Dead::~Quarter_Dead(){
-    //cout << "\t*** dest QD" << endl;
+    players.clear();
+    cout << "\t*** dest QD" << endl;
 }
 
 const Map& Quarter_Dead::getEtage(int i) const{
@@ -43,7 +44,7 @@ void Quarter_Dead::generateMaze(){
     bool goal = false;
     Vect2i vGoal;
     for (int i=0 ; i<NB_ETAGES ; i++){
-        cout << "----\netage " << i << endl;
+        //cout << "----\netage " << i << endl;
         goal = false;
         vGoal = Vect2i(-1, -1);
 
@@ -101,37 +102,37 @@ void Quarter_Dead::generateMaze(){
                 }
             }
         }
-        cout << "toutes les rooms sont prêtes" << endl;
-        cout << "Goal etage " << i << ": " << vGoal << endl;
+        //cout << "toutes les rooms sont prêtes" << endl;
+        //cout << "Goal etage " << i << ": " << vGoal << endl;
 
         if ( vGoal.x == -1 || vGoal.y == -1 ){
-            cout << "placement aléatoire du goal" << endl;
+            //cout << "placement aléatoire du goal" << endl;
             int randj = rand() % MAP_SIZE;
             int randk = rand() % MAP_SIZE;
             maze[i][randj][randk] = make_shared<Room>(Goal());
             vGoal = Vect2i(randj, randk);
-            cout << "Goal placé en: " << vGoal << endl;
+            //cout << "Goal placé en: " << vGoal << endl;
         }
 
         /* placement du spawn de l'étage i */
         int test = spawns[i].x - vGoal.x < 0 ? -(spawns[i].x - vGoal.x) : spawns[i].x - vGoal.x;
-        cout << "test: " << test << endl;
+        //cout << "test: " << test << endl;
         do{
             spawns[i].x = (spawns[i].x + (rand()%MAP_SIZE)) % MAP_SIZE;
             test = spawns[i].x - vGoal.x < 0 ? -(spawns[i].x - vGoal.x) : spawns[i].x - vGoal.x;
         }while (test < MAP_SIZE/2);
-        cout << "test: " << test << endl;
+        //cout << "test: " << test << endl;
         test = spawns[i].y - vGoal.y < 0 ? -(spawns[i].y - vGoal.y) : spawns[i].y - vGoal.y;
-        cout << "test: " << test << endl;
+        //cout << "test: " << test << endl;
         do{
             spawns[i].y = (spawns[i].y + (rand()%MAP_SIZE)) % MAP_SIZE;
             test = spawns[i].y - vGoal.y < 0 ? -(spawns[i].y - vGoal.y) : spawns[i].y - vGoal.y;
         }while (test < MAP_SIZE/2);
-        cout << "test: " << test << endl;
-        cout << "spawn étage i: " << spawns[i] << endl;
+        //cout << "test: " << test << endl;
+        //cout << "spawn étage i: " << spawns[i] << endl;
         maze[i][spawns[i].x][spawns[i].y] = make_shared<Room>(Room());
     }
-    cout << "done" << endl;
+    //cout << "done" << endl;
 }
 
 const std::string Quarter_Dead::mapMess(int etage) const{
@@ -176,6 +177,7 @@ void Quarter_Dead::handleIncomingMessage(){
             // état initial, on attend que 4 joueurs soient connectés
 			if (recMess[0]=='C')
 			{
+                cout << "--- Demande de connection" << endl;
 				dir = recMess[1]-'0'; // ascii to int
 				if (!isConnected(dir))
 				{
@@ -192,6 +194,7 @@ void Quarter_Dead::handleIncomingMessage(){
 				{
                     cout << "Tout le monde est là! On passe au jeu." << endl;
                     setState(GAME);
+                    cout << "Passage à l'état de GAME" << endl;
                     generateMaze();
                     // Envoie des salles de chaque etage dans le code des joueurs
                     for (int i=0 ; i<NB_ETAGES ; i++){

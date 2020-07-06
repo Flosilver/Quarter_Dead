@@ -2,6 +2,15 @@
 
 using namespace std;
 
+void kb_event(int* in){
+    cout << "thread created" << endl;
+    while (in != nullptr){
+        cout << "thread en cours" << endl;
+        *in = getchar();
+    }
+    exit(EXIT_SUCCESS);
+}
+
 int main (){
     srand(time(0));
     cout << "\n\n\n____________________________________________________________________________________" << endl;
@@ -10,8 +19,13 @@ int main (){
     Quarter_Dead game;
     game.launch(SERVER_PORT);
 
+    int input = '\0';
+
+    thread kbe(kb_event, &input);
+    kbe.detach();
+
     /* tests */
-    cout << "---game created" << endl;
+    /*cout << "---game created" << endl;
     game.generateMaze();
     cout << "---map generated" << endl;
     for (int i=0 ; i<NB_ETAGES ; i++){
@@ -45,30 +59,34 @@ int main (){
     sp_Joueur spj = game.getPlayer(1);
     cout << spj->getDir() << " " << spj->getRole() << endl;
     spj->giveRole(3);
-    cout << spj->getRole() << endl;
+    cout << spj->getRole() << endl;*/
 
     /* suite du vrai main */
-    /*while (1)
+    while (input!='q' && input!='Q')
     {
-            while (game.game_host_service() > 0)
+        while (game.game_host_service() > 0)
+        {
+            switch (game.event.type)
             {
-                switch (game.event.type)
-                {
-                    case ENET_EVENT_TYPE_CONNECT:
-                            printf ("A new client connected from %x:%u.\n", game.event.peer -> address.host, game.event.peer -> address.port);
-                            break;
-                    case ENET_EVENT_TYPE_RECEIVE:
-                            game.receive_event();
-                            game.handleIncomingMessage();
-                            break;
-                    case ENET_EVENT_TYPE_DISCONNECT:
-                            printf ("%s disconnected FPX.\n", (char*)game.event.peer -> data);
-                            game.event.peer -> data = NULL;
-                }
+                case ENET_EVENT_TYPE_CONNECT:
+                    printf ("A new client connected from %x:%u.\n", game.event.peer -> address.host, game.event.peer -> address.port);
+                    break;
+                case ENET_EVENT_TYPE_RECEIVE:
+                    game.receive_event();
+                    game.handleIncomingMessage();
+                    break;
+                case ENET_EVENT_TYPE_DISCONNECT:
+                    printf ("%s disconnected FPX.\n", (char*)game.event.peer -> data);
+                    game.event.peer -> data = NULL;
+                    break;
+                case ENET_EVENT_TYPE_NONE:
+                    break;
+                
             }
-            // TODO: méthode pour quitter proprement la boucle
-    }*/
+        }
+        // TODO: méthode pour quitter proprement la boucle
+    }
+    //atexit (enet_deinitialize);
 
-    atexit (enet_deinitialize);
     return 0;
 }

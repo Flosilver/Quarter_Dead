@@ -4,10 +4,12 @@
 #include <iostream>
 #include <memory>
 #include <cstdlib>
+#include <cstdio>
 #include <ctime>
 #include <vector>
 #include <list>
 #include <set>
+#include <thread>
 
 #include <Rosace.hpp>
 
