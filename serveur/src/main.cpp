@@ -5,7 +5,7 @@ using namespace std;
 void kb_event(int* in){
     cout << "thread created" << endl;
     while (in != nullptr){
-        cout << "thread en cours" << endl;
+        //cout << "thread en cours" << endl;
         *in = getchar();
     }
     exit(EXIT_SUCCESS);

@@ -14,7 +14,7 @@ __meta__ = {
 [node name="Spatial" type="Spatial" parent="."]
 
 [node name="Camera" type="Camera" parent="Spatial"]
-transform = Transform( -1.0554e-07, -0.76181, 0.647801, -1.24115e-07, 0.647801, 0.76181, -1, 7.10543e-15, -1.62921e-07, 10, 10, 0 )
+transform = Transform( -1.0554e-07, -0.76181, 0.647801, -1.24115e-07, 0.647801, 0.76181, -1, 7.10543e-15, -1.62921e-07, 2, 3, 0 )
 script = ExtResource( 2 )
 
 [node name="InfoScreen" type="Node2D" parent="Spatial"]
