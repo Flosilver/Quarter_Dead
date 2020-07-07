@@ -183,6 +183,7 @@ void Quarter_Dead::handleIncomingMessage(){
 				{
 					connect(dir);
                     sprintf(mess, "c%d", dir);
+                    sendBroadcast(mess);
 				}
 
 				// Tout le monde est connecté, on envoie plein de choses
@@ -195,7 +196,14 @@ void Quarter_Dead::handleIncomingMessage(){
                     cout << "Tout le monde est là! On passe au jeu." << endl;
                     setState(GAME);
                     cout << "Passage à l'état de GAME" << endl;
+
+                    // Envoie des infos sur le jeux
+                    sprintf(mess, "m%d%d", NB_ETAGES, MAP_SIZE);
+                    sendBroadcast(mess);
+
+                    // Génération de la map
                     generateMaze();
+
                     // Envoie des salles de chaque etage dans le code des joueurs
                     for (int i=0 ; i<NB_ETAGES ; i++){
                         sprintf(mess, "g%d%s", i, mapMess(i).c_str());
@@ -217,7 +225,7 @@ void Quarter_Dead::handleIncomingMessage(){
                         roles[i] = roles[haz];
                         roles[haz] = temp;
                     }
-                    sprintf(mess, "r%d%d%d%d%d%d%d%d",0,roles[0],1,roles[1],2,roles[2],3,roles[3]);
+                    sprintf(mess, "r%d%d%d%d",roles[0],roles[1],roles[2],roles[3]);
                     sendBroadcast(mess);
                     for (int i=0 ; i<NB_J_MAX ; i++){
                         players[i]->giveRole(roles[i]);

@@ -16,12 +16,18 @@ var current
 
 var playersPresent=[0,0,0,0]
 
+var nb_etages
+var map_size
+
+const NB_J=4
 
 func _ready():
 	controlMenuNode=null
 	controlGameNode=null
 	controlOptionsNode=null
 	controlSplashNode=null
+	nb_etages = 0
+	map_size = 0
 	direction=-1
 	serverAddress="errorServerAddress"
 	print("global _ready() called")

@@ -14,7 +14,7 @@ __meta__ = {
 [node name="Spatial" type="Spatial" parent="."]
 
 [node name="Camera" type="Camera" parent="Spatial"]
-transform = Transform( -1.0554e-07, -0.76181, 0.647801, -1.24115e-07, 0.647801, 0.76181, -1, 7.10543e-15, -1.62921e-07, 2, 3, 0 )
+transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -5, 3, -3 )
 script = ExtResource( 2 )
 
 [node name="InfoScreen" type="Node2D" parent="Spatial"]
@@ -26,4 +26,37 @@ text = "Menu principal"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="ButtonC1" type="Button" parent="."]
+margin_left = 400.0
+margin_top = 20.0
+margin_right = 432.0
+margin_bottom = 52.0
+text = "C1"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonC2" type="Button" parent="."]
+margin_left = 500.0
+margin_top = 20.0
+margin_right = 532.0
+margin_bottom = 52.0
+text = "C2"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonC3" type="Button" parent="."]
+margin_left = 600.0
+margin_top = 20.0
+margin_right = 632.0
+margin_bottom = 52.0
+text = "C3"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="pressed" from="ButtonMenu" to="." method="_on_ButtonMenu_pressed"]
+[connection signal="pressed" from="ButtonC1" to="." method="_on_ButtonC1_pressed"]
+[connection signal="pressed" from="ButtonC2" to="." method="_on_ButtonC2_pressed"]
+[connection signal="pressed" from="ButtonC3" to="." method="_on_ButtonC3_pressed"]

@@ -22,12 +22,6 @@ func _on_ButtonJouer_pressed():
 	var connectMessage="C"+str(global.direction)
 	global.mplayer.send_bytes(connectMessage.to_ascii())
 
-	connectMessage="C1"
-	global.mplayer.send_bytes(connectMessage.to_ascii())
-	connectMessage="C2"
-	global.mplayer.send_bytes(connectMessage.to_ascii())
-	connectMessage="C3"
-	global.mplayer.send_bytes(connectMessage.to_ascii())
 
 func _on_ButtonOptions_pressed():
 	var root=get_tree().get_root()
