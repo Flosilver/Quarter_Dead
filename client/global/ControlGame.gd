@@ -15,9 +15,8 @@ var objRooms=[
 	"res://obj/", 
 	#05
 	"res://obj/", 
-	#06
-	"res://obj/", 
 ]
+
 # chemins vers les textures associées aux rooms
 var tileRooms=[
 	 #00
@@ -32,8 +31,30 @@ var tileRooms=[
 	"res://tiles/Texture/", 
 	#05
 	"res://tiles/Texture/", 
-	#06
-	"res://tiles/Texture/", 
+]
+
+var txRooms=[
+	#00
+	null,
+	#01
+	null, 
+	#02
+	null, 
+	#03
+	null, 
+	#04
+	null, 
+	#05
+	null, 
+]
+
+var txDoors=[
+	#00
+	null,
+	#01
+	null, 
+	#02
+	null, 
 ]
 
 var lOffsetExplo=[
@@ -47,6 +68,11 @@ var lOffsetExplo=[
 var lExplos=[null,null,null,null]
 var campx
 var campy
+var pressed=[0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	]
 
 var maze
 const roomOff = 3.5
@@ -63,6 +89,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
+#	if Input.get_connected_joypads().size() > 0:
 #	pass
 
 func _networkMessage(mess):
@@ -102,10 +129,13 @@ func _networkMessage(mess):
 					#print(maze[etage][i][j])
 					idr += 1
 			buildMaze(etage)
+			#createRoom(0,0,0)
 			
 		'p': # placement des pions
 			var y = int(mess[1])
 			var x = int(mess[2])
+#			x = 0
+#			y = 0
 			for i in range(global.NB_J):
 				lExplos[i].set_translation(Vector3((x*2*roomOff)+lOffsetExplo[i][0],0,(y*2*roomOff)+lOffsetExplo[i][1]))
 			var cam=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
@@ -113,22 +143,27 @@ func _networkMessage(mess):
 	
 func createRoom(x,y,room_num):
 	# Create a new tile instance
+	room_num = 0
 	var mi=MeshInstance.new()
 	# and translate it to its final position
 	mi.set_translation(Vector3(x,0,y))
 	# load the room mesh
-	var meshObj=load(objRooms[0])#->load(objRooms[room_num])
+	var meshObj=load(objRooms[room_num])
 	# and assign the mesh instance with it
 	mi.mesh=meshObj
 	# create a new spatial material for the tile
-#	var spatial_material=SpatialMaterial.new()
-#	# and assign the material to the mesh instance
-#	mi.set_surface_material(0,spatial_material)
-#	# create a new image texture that will be used as a room texture
-#	var texture=ImageTexture.new()
-#	texture.load("res://tiles/Texture/texture2.png")#(tileRooms[room_num])
-#	# and perform the assignment to the surface_material
-#	spatial_material.albedo_texture=texture
+	var spatial_material=SpatialMaterial.new()
+	# and assign the material to the mesh instance
+	mi.set_surface_material(0,spatial_material)
+	# create a new image texture if not already created that will be used as a room texture
+	if txRooms[room_num] == null:
+		txRooms[room_num] = ImageTexture.new()
+		txRooms[room_num].load(tileRooms[room_num])
+		# and perform the assignment to the surface_material
+		spatial_material.albedo_texture=txRooms[room_num]
+	else:
+		# and perform the assignment to the surface_material
+		spatial_material.albedo_texture=txRooms[room_num]
 	# add the newly created instance as a child of the Origine3D Node
 	$Spatial.add_child(mi)
 	return mi

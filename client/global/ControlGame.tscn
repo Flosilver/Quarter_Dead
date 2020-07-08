@@ -28,9 +28,9 @@ __meta__ = {
 }
 
 [node name="ButtonC1" type="Button" parent="."]
-margin_left = 400.0
+margin_left = 450.0
 margin_top = 20.0
-margin_right = 432.0
+margin_right = 482.0
 margin_bottom = 52.0
 text = "C1"
 __meta__ = {
@@ -48,9 +48,9 @@ __meta__ = {
 }
 
 [node name="ButtonC3" type="Button" parent="."]
-margin_left = 600.0
+margin_left = 550.0
 margin_top = 20.0
-margin_right = 632.0
+margin_right = 582.0
 margin_bottom = 52.0
 text = "C3"
 __meta__ = {

@@ -203,6 +203,8 @@ void Quarter_Dead::handleIncomingMessage(){
 
                     // Génération de la map
                     generateMaze();
+                    maze[0].print();
+                    cout << "spawn: " << spawns[0] << endl;
 
                     // Envoie des salles de chaque etage dans le code des joueurs
                     for (int i=0 ; i<NB_ETAGES ; i++){
