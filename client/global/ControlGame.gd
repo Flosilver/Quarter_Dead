@@ -2,6 +2,7 @@ extends Control
 
 var explorerColor=[Color(255,0,0),Color(0,255,0),Color(0,0,255),Color(255,255,0)]
 # chemins vers les différents des objets rooms
+
 var objRooms=[
 	#00
 	"res://obj/sallesw.obj",
@@ -16,7 +17,6 @@ var objRooms=[
 	#05
 	"res://obj/", 
 ]
-
 # chemins vers les textures associées aux rooms
 var tileRooms=[
 	 #00
@@ -32,7 +32,7 @@ var tileRooms=[
 	#05
 	"res://tiles/Texture/", 
 ]
-
+# textures des rooms
 var txRooms=[
 	#00
 	null,
@@ -47,14 +47,35 @@ var txRooms=[
 	#05
 	null, 
 ]
-
+var objDoors=[
+	#00
+	"res://obj/Porte1.obj",
+	#01
+	"res://obj/Porte2.obj", 
+	#02
+	"res://obj/PorteVerre.obj",
+	#03
+	"res://obj/Vitre.obj"
+]
+var tileDoors=[
+	#00
+	"res://tiles/Texture/texturePorte1.0.png",
+	#01
+	"res://tiles/Texture/texturePorte2.0.png", 
+	#02
+	"res://tiles/Texture/texturePorteVerre.0.png",
+	#03
+	"res://tiles/Texture/"
+]
 var txDoors=[
 	#00
 	null,
 	#01
 	null, 
 	#02
-	null, 
+	null,
+	#03
+	null
 ]
 
 var lOffsetExplo=[
@@ -66,6 +87,67 @@ var lOffsetExplo=[
 
 # liste contenant les pointeurs vers les 5 nodes exit crées
 var lExplos=[null,null,null,null]
+var objExplo=[
+	#00
+	"res://obj/",
+	#01
+	"res://obj/", 
+	#02
+	"res://obj/", 
+	#03
+	"res://obj/", 
+	#04
+	"res://obj/", 
+	#05
+	"res://obj/",
+	#06
+	"res://obj/robot.obj",
+	#07
+	"res://obj/",
+	#08 : obj du modèle temporaire pour la connexion
+	"res://obj/Personage.obj"
+]
+var tileExplo=[
+	#00
+	"res://tiles/Texture/",
+	#01
+	"res://tiles/Texture/", 
+	#02
+	"res://tiles/Texture/", 
+	#03
+	"res://tiles/Texture/", 
+	#04
+	"res://tiles/Texture/", 
+	#05
+	"res://tiles/Texture/",
+	#06
+	"res://tiles/Texture/textureRobot1.0.png",
+	#07
+	"res://tiles/Texture/",
+	#08 : chemin de la texture pour le modèle temporaire
+	"res://tiles/Texture/texturePersonnage.jpg"
+]
+var txExplo=[
+	#00
+	null,
+	#01
+	null, 
+	#02
+	null, 
+	#03
+	null, 
+	#04
+	null, 
+	#05
+	null,
+	#06
+	null,
+	#07
+	null,
+	#08 : texture du modèle temporaire
+	null
+]
+
 var campx
 var campy
 var pressed=[0,0,0,0,0,
@@ -83,7 +165,7 @@ func _ready():
 	campx=-5
 	campy=-5
 	var i = global.direction
-	lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1],i)
+	lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1],i,8)
 	pass # Replace with function body.
 
 
@@ -114,7 +196,7 @@ func _networkMessage(mess):
 				for j in range(global.map_size):
 					maze[i].push_back([])
 					for k in range(global.map_size):
-						maze[i][j].append(0)
+						maze[i][j].append(null)
 				print("étage ", i, " x=", maze[i].size(), " y=", maze[i][0].size())
 			print("nb_étages créés: ",maze.size())
 			
@@ -140,7 +222,17 @@ func _networkMessage(mess):
 				lExplos[i].set_translation(Vector3((x*2*roomOff)+lOffsetExplo[i][0],0,(y*2*roomOff)+lOffsetExplo[i][1]))
 			var cam=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
 			cam.set_translation(Vector3(x*2*roomOff,3,(y*2*roomOff)+2))
-	
+			
+		'r': # distribution des rôles
+			var xtemp
+			var ytemp
+			var ztemp
+			for i in range(global.NB_J):
+				xtemp = lExplos[i].translation.x
+				ytemp = lExplos[i].translation.y
+				ztemp = lExplos[i].translation.z
+				lExplos[i] = createExplorer(xtemp,ztemp,i,mess[i+1])
+
 func createRoom(x,y,room_num):
 	# Create a new tile instance
 	room_num = 0
@@ -168,7 +260,11 @@ func createRoom(x,y,room_num):
 	$Spatial.add_child(mi)
 	return mi
 	
-func createExplorer(x,y,num):
+func createExplorer(x,y,who,role):
+	if lExplos[who] != null:
+		$Spatial.remove_child(lExplos[who])
+	role = 8
+	
 	# Create a new tile instance
 	var mi=MeshInstance.new()
 	# and translate it to its final position
@@ -176,19 +272,23 @@ func createExplorer(x,y,num):
 	mi.set_rotation(Vector3(0,-PI/2.0,0))
 	mi.set_scale(Vector3(0.5,0.5,0.5))
 	# load the tile mesh
-	var meshObj=load("res://obj/robot.obj")
+	var meshObj=load(objExplo[role])
 	# and assign the mesh instance with it
 	mi.mesh=meshObj
 	# create a new spatial material for the tile
-	var surface_material=SpatialMaterial.new()
+	var spatial_material=SpatialMaterial.new()
 	# set its color
 	# surface_material.albedo_color=explorerColor[num]
 	# and assign the material to the mesh instance
-	mi.set_surface_material(0,surface_material)
-	
-	var texture = ImageTexture.new()
-	texture.load("res://tiles/Texture/textureRobot1.0.png")
-	surface_material.albedo_texture=texture
+	mi.set_surface_material(0,spatial_material)
+	if txExplo[role] == null:
+		txExplo[role] = ImageTexture.new()
+		txExplo[role].load(tileExplo[role])
+		# and perform the assignment to the surface_material
+		spatial_material.albedo_texture=txExplo[role]
+	else:
+		# and perform the assignment to the surface_material
+		spatial_material.albedo_texture=txExplo[role]
 	# add the newly created instance as a child of the Origine3D Node
 	$Spatial.add_child(mi)
 	return mi
@@ -198,7 +298,7 @@ func buildMaze(etage):
 	
 	for i in range(global.map_size):
 		for j in range(global.map_size):
-			createRoom(2*i*roomOff,2*j*roomOff,maze[etage][i][j])
+			maze[etage][i][j] = createRoom(2*i*roomOff,2*j*roomOff,maze[etage][i][j])
 
 func _on_ButtonMenu_pressed():
 	var root=get_tree().get_root()
@@ -215,7 +315,7 @@ func _on_ButtonC1_pressed():
 	var i = 1
 	if global.playersPresent[i] == 0:
 		print("création d'un nouveau explorateur")
-		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1],i)
+		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
 
 
 func _on_ButtonC2_pressed():
@@ -225,7 +325,7 @@ func _on_ButtonC2_pressed():
 	var i = 2
 	if global.playersPresent[i] == 0:
 		print("création d'un nouveau explorateur")
-		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1],i)
+		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
 
 
 func _on_ButtonC3_pressed():
@@ -235,4 +335,4 @@ func _on_ButtonC3_pressed():
 	var i = 3
 	if global.playersPresent[i] == 0:
 		print("création d'un nouveau explorateur")
-		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1],i)
+		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
