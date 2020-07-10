@@ -19,6 +19,8 @@ var playersPresent=[0,0,0,0]
 var nb_etages
 var map_size
 
+var vise = 0
+
 const NB_J=4
 
 func _ready():
