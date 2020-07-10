@@ -5,7 +5,7 @@ var explorerColor=[Color(255,0,0),Color(0,255,0),Color(0,0,255),Color(255,255,0)
 
 var objRooms=[
 	#00
-	"res://obj/sallesw.obj",
+	"res://obj/Piece.obj",
 	#01
 	"res://obj/", 
 	#02
@@ -20,7 +20,7 @@ var objRooms=[
 # chemins vers les textures associées aux rooms
 var tileRooms=[
 	 #00
-	"res://tiles/Texture/texture2.png",
+	"res://tiles/Texture/texturePiece.png",
 	#01
 	"res://tiles/Texture/", 
 	#02
@@ -49,9 +49,9 @@ var txRooms=[
 ]
 var objDoors=[
 	#00
-	"res://obj/Porte1.obj",
+	"res://obj/PorteGauche.obj",
 	#01
-	"res://obj/Porte2.obj", 
+	"res://obj/PorteDroite.obj", 
 	#02
 	"res://obj/PorteVerre.obj",
 	#03
@@ -59,13 +59,15 @@ var objDoors=[
 ]
 var tileDoors=[
 	#00
-	"res://tiles/Texture/texturePorte1.0.png",
+	"res://tiles/Texture/texturePorteGauche.png",
 	#01
-	"res://tiles/Texture/texturePorte2.0.png", 
+	"res://tiles/Texture/texturePorteDroite.png", 
 	#02
-	"res://tiles/Texture/texturePorteVerre.0.png",
+	"res://tiles/Texture/texturePorteVerre.png",
 	#03
-	"res://tiles/Texture/"
+	"res://tiles/Texture/",
+	#04
+	"res://tiles/Texture/texturePorteGaucheRed.png"
 ]
 var txDoors=[
 	#00
@@ -101,7 +103,7 @@ var objExplo=[
 	#05
 	"res://obj/",
 	#06
-	"res://obj/robot001.obj",
+	"res://obj/Robot.obj",
 	#07
 	"res://obj/",
 	#08 : obj du modèle temporaire pour la connexion
@@ -121,7 +123,7 @@ var tileExplo=[
 	#05
 	"res://tiles/Texture/",
 	#06
-	"res://tiles/Texture/textureRobot1.0.png",
+	"res://tiles/Texture/textureRobot.png",
 	#07
 	"res://tiles/Texture/",
 	#08 : chemin de la texture pour le modèle temporaire
