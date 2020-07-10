@@ -22,18 +22,19 @@ func _ready():
 func _process(delta):
 	if Input.get_connected_joypads().size() > 0:
 		# joystick de gauche
-		var xAxis = Input.get_joy_axis(0,JOY_AXIS_0)	# axe hor
-		var zAxis = Input.get_joy_axis(0,JOY_AXIS_1)	# axe ver
+		var xAxis = Input.get_joy_axis(0,JOY_AXIS_0)	# axe horizontal
+		var zAxis = Input.get_joy_axis(0,JOY_AXIS_1)	# axe vertical
 		# joystick de droite
-		var xAxis1 = Input.get_joy_axis(0,JOY_AXIS_2)	# axe hor
-		var zAxis1 = Input.get_joy_axis(0,JOY_AXIS_3)	# axe ver
+		var xAxis1 = Input.get_joy_axis(0,JOY_AXIS_2)	# axe horizontal
+		var zAxis1 = Input.get_joy_axis(0,JOY_AXIS_3)	# axe vertical
 
 		if abs(xAxis)>0.6:
 			#print("axis 0 : ", xAxis)
-			translation.x+=delta * xAxis * coef / 2
-		if abs(zAxis)>0.6:
-			#print("axis 1 : ", zAxis)
-			translation.z+=delta * zAxis * coef / 2
+			#translation.x+=delta * xAxis * coef / 2
+			rotation.y -= xAxis/abs(xAxis) * PI/2
+#		if abs(zAxis)>0.6:
+#			#print("axis 1 : ", zAxis)
+#			#translation.z+=delta * zAxis * coef / 2
 
 #		if abs(xAxis1)>0.6:
 #			#print("axis 2 : ", xAxis1)
@@ -47,7 +48,7 @@ func _process(delta):
 			pressed[1]=1
 			print ("B pressed")
 			
-			var cam=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
+			#var cam=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
 			var dir = global.direction
 			var joueur = gameNode.lExplos[dir]
 			var x = joueur.translation.x

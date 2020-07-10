@@ -101,11 +101,11 @@ var objExplo=[
 	#05
 	"res://obj/",
 	#06
-	"res://obj/robot.obj",
+	"res://obj/robot001.obj",
 	#07
 	"res://obj/",
 	#08 : obj du modèle temporaire pour la connexion
-	"res://obj/Personage.obj"
+	"res://obj/Personnage.obj"
 ]
 var tileExplo=[
 	#00
@@ -195,7 +195,7 @@ func _networkMessage(mess):
 				maze.push_back([])
 				for j in range(global.map_size):
 					maze[i].push_back([])
-					for k in range(global.map_size):
+					for _k in range(global.map_size):
 						maze[i][j].append(null)
 				print("étage ", i, " x=", maze[i].size(), " y=", maze[i][0].size())
 			print("nb_étages créés: ",maze.size())
@@ -221,7 +221,7 @@ func _networkMessage(mess):
 			for i in range(global.NB_J):
 				lExplos[i].set_translation(Vector3((x*2*roomOff)+lOffsetExplo[i][0],0,(y*2*roomOff)+lOffsetExplo[i][1]))
 			var cam=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
-			cam.set_translation(Vector3(x*2*roomOff,3,(y*2*roomOff)+2))
+			cam.set_translation(Vector3(x*2*roomOff,2,(y*2*roomOff)))
 			
 		'r': # distribution des rôles
 			var xtemp
@@ -231,7 +231,8 @@ func _networkMessage(mess):
 				xtemp = lExplos[i].translation.x
 				ytemp = lExplos[i].translation.y
 				ztemp = lExplos[i].translation.z
-				lExplos[i] = createExplorer(xtemp,ztemp,i,mess[i+1])
+				lExplos[i] = createExplorer(xtemp,ztemp,i,6)#mess[i+1])
+				lExplos[i].set_translation(Vector3(xtemp,ytemp,ztemp))
 
 func createRoom(x,y,room_num):
 	# Create a new tile instance
@@ -251,26 +252,78 @@ func createRoom(x,y,room_num):
 	if txRooms[room_num] == null:
 		txRooms[room_num] = ImageTexture.new()
 		txRooms[room_num].load(tileRooms[room_num])
-		# and perform the assignment to the surface_material
-		spatial_material.albedo_texture=txRooms[room_num]
-	else:
-		# and perform the assignment to the surface_material
-		spatial_material.albedo_texture=txRooms[room_num]
+	# and perform the assignment to the surface_material
+	spatial_material.albedo_texture=txRooms[room_num]
+	
+	#ajout des portes
+	var distP = 3.3		#distance pour les portes
+	var distV = 3.5		#distance pour les portes en verre
+	var ppos = Vector3(0,0,0)		# vecteur de position des portes
+	var vpos = Vector3(0,0,0)		# vecteur de position de la porte vitrée
+	var pg		# porte de gauche
+	var pd		# porte de droite
+	var pv		# porte de verre
+	var v		# vitre
+	var portes = [pg, pd, pv, v]
+	var txpg	# texture porte de gauche
+	var txpd	# texture porte de droite
+	var txpv	# texture porte de verre
+	var txv		# texture vitre
+	var tx_portes = [txpg, txpd, txpv, txv]
+	for i in range(4):
+		ppos = Vector3(0,0,0)		# vecteur de position des portes
+		vpos = Vector3(0,0,0)		# vecteur de position de la porte vitrée
+		# adaptation des position
+		match i:
+			0:
+				ppos.x = -distP
+				vpos.x = -distV
+			1:
+				ppos.z = distP
+				vpos.z = distV
+			2:
+				ppos.x = distP
+				vpos.x = distV
+			3:
+				ppos.z = -distP
+				vpos.z = -distV
+		for j in range(4):
+			# création de la Mesh
+			portes[j] = MeshInstance.new()
+			# positionnement de la Mesh
+			if (j<2):
+				portes[j].set_translation(ppos)
+			else:
+				portes[j].set_translation(vpos)
+			portes[j].set_rotation(Vector3(0,i*PI/2,0))
+			# load du modèle
+			portes[j].mesh = load(objDoors[j])
+			#instanciation de la texture
+			tx_portes[j] = SpatialMaterial.new()
+			# assignation de la texture
+			portes[j].set_surface_material(0,tx_portes[j])
+			# chargement de la texture
+			if txDoors[j] == null:
+				txDoors[j] = ImageTexture.new()
+				txDoors[j].load(tileDoors[j])
+			# and perform the assignment to the surface_material
+			tx_portes[j].albedo_texture=txDoors[j]
+			mi.add_child(portes[j])
+	
 	# add the newly created instance as a child of the Origine3D Node
 	$Spatial.add_child(mi)
 	return mi
 	
 func createExplorer(x,y,who,role):
 	if lExplos[who] != null:
+		print("remplacement du personnage")
 		$Spatial.remove_child(lExplos[who])
-	role = 8
 	
 	# Create a new tile instance
 	var mi=MeshInstance.new()
 	# and translate it to its final position
 	mi.set_translation(Vector3(x,0,y))
-	mi.set_rotation(Vector3(0,-PI/2.0,0))
-	mi.set_scale(Vector3(0.5,0.5,0.5))
+	mi.set_rotation(Vector3(0,0,0))
 	# load the tile mesh
 	var meshObj=load(objExplo[role])
 	# and assign the mesh instance with it
@@ -284,11 +337,8 @@ func createExplorer(x,y,who,role):
 	if txExplo[role] == null:
 		txExplo[role] = ImageTexture.new()
 		txExplo[role].load(tileExplo[role])
-		# and perform the assignment to the surface_material
-		spatial_material.albedo_texture=txExplo[role]
-	else:
-		# and perform the assignment to the surface_material
-		spatial_material.albedo_texture=txExplo[role]
+	# and perform the assignment to the surface_material
+	spatial_material.albedo_texture=txExplo[role]
 	# add the newly created instance as a child of the Origine3D Node
 	$Spatial.add_child(mi)
 	return mi
