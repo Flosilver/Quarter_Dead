@@ -272,7 +272,7 @@ func createRoom(x,y,room_num):
 	var tx_portes = [txpg, txpd, txpv, txv]
 	for i in range(4):
 		ppos = Vector3(0,0,0)		# vecteur de position des portes
-		vpos = Vector3(0,0,0)		# vecteur de position de la porte vitrée
+		vpos = Vector3(0,2,0)		# vecteur de position de la porte vitrée
 		# adaptation des position
 		match i:
 			0:
