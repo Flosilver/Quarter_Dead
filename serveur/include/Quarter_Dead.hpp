@@ -20,6 +20,11 @@ class Quarter_Dead : public rsc::Game
 
         std::vector<sp_Joueur> players = std::vector<sp_Joueur>(NB_J_MAX);  // list of 4 players
 
+        rsc::Vect2i move_North = rsc::Vect2i(-1, 0);  // vise = 0
+        rsc::Vect2i move_East = rsc::Vect2i(0, 1);    // vise = 1
+        rsc::Vect2i move_South = rsc::Vect2i(1, 0);   // vise = 2
+        rsc::Vect2i move_West = rsc::Vect2i(0, -1);   // vise = 3
+        rsc::Vect2i mouvements[4] = {move_North, move_East, move_South, move_West};
 
     public:
         Quarter_Dead();

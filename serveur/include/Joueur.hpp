@@ -32,6 +32,7 @@ class Joueur : public Player
         const int& getAgility() const;
         const int& getRole() const;
         const bool isAlive() const;
+        const Vect2i& getPawnPosition() const;
 
         /* Methodes */
         void receiveDMG(int dmg);

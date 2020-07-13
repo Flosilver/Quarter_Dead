@@ -171,6 +171,8 @@ void Quarter_Dead::handleIncomingMessage(){
     int dir;        // direction du joueur qui envoie un message
     int haz;        // variable de random
     int temp;       // vairiable temporaire
+    Vect2i pos;     // position du joueur envoyant un message
+    int vise;    // direction que vise le joueur envoyant un message pour son action
 
     switch (state){
         case CONNECTION:
@@ -237,7 +239,31 @@ void Quarter_Dead::handleIncomingMessage(){
             break;
 
         case GAME:
-
+            dir = recMess[1]-'0'; // ascii to int
+            switch( recMess[0] ){
+                case 'O':
+                    vise = recMess[2]-'0';                  // où vise le joueur pour son action000000000000
+                    pos = players[dir]->getPawnPosition();
+                    if (vise%2 == 0){
+                        temp = pos.x + mouvements[vise].x;
+                    }
+                    else{
+                        temp = pos.y + mouvements[vise].y;
+                    }
+                    if (temp < 0 || temp >= MAP_SIZE){      // déplacement impossible
+                        sprintf(mess, "on");
+                        sendBroadcast(mess);
+                    }
+                    else{                                   // déplacement possible
+                        sprintf(mess, "oy%d%d", dir, vise);
+                        sendBroadcast(mess);
+                    }
+                    break;
+                
+                default:
+                    cerr << "***ERROR : state=GAME : unknown command" << endl;
+                    break;
+            }
             break;
 
         case END:

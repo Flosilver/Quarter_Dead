@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/PersonnageHommeChat.obj-ad0404ae3c45d5c7e318753b7dfcb6e8.mesh"
+
+[deps]
+
+files=[ "res://.import/PersonnageHommeChat.obj-ad0404ae3c45d5c7e318753b7dfcb6e8.mesh" ]
+
+source_file="res://obj/PersonnageHommeChat.obj"
+dest_files=[ "res://.import/PersonnageHommeChat.obj-ad0404ae3c45d5c7e318753b7dfcb6e8.mesh", "res://.import/PersonnageHommeChat.obj-ad0404ae3c45d5c7e318753b7dfcb6e8.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

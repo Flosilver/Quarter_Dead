@@ -91,43 +91,43 @@ var lOffsetExplo=[
 var lExplos=[null,null,null,null]
 var objExplo=[
 	#00
-	"res://obj/",
+	"res://obj/Personnage.obj",
 	#01
-	"res://obj/", 
+	"res://obj/Personnage.obj", 
 	#02
-	"res://obj/", 
+	"res://obj/Personnage.obj", 
 	#03
-	"res://obj/", 
+	"res://obj/Personnage.obj", 
 	#04
-	"res://obj/", 
+	"res://obj/PersonnageHommeChat.obj", 
 	#05
-	"res://obj/",
+	"res://obj/PersonnageHommeChat.obj",
 	#06
 	"res://obj/Robot.obj",
 	#07
-	"res://obj/",
+	"res://obj/Personnage.obj",
 	#08 : obj du modèle temporaire pour la connexion
 	"res://obj/Personnage.obj"
 ]
 var tileExplo=[
 	#00
-	"res://tiles/Texture/",
+	"res://tiles/Texture/texturePersonnageAcrobate.png",
 	#01
-	"res://tiles/Texture/", 
+	"res://tiles/Texture/texturePersonnageCordonier.png", 
 	#02
-	"res://tiles/Texture/", 
+	"res://tiles/Texture/texturePersonnage.png", 
 	#03
-	"res://tiles/Texture/", 
+	"res://tiles/Texture/texturePersonnageMedecin.png", 
 	#04
-	"res://tiles/Texture/", 
+	"res://tiles/Texture/texturePersonnageHommeChat.png", 
 	#05
-	"res://tiles/Texture/",
+	"res://tiles/Texture/texturePersonnageHommeChat.png",
 	#06
 	"res://tiles/Texture/textureRobot.png",
 	#07
-	"res://tiles/Texture/",
+	"res://tiles/Texture/texturePersonnageTank.png",
 	#08 : chemin de la texture pour le modèle temporaire
-	"res://tiles/Texture/texturePersonnage.jpg"
+	"res://tiles/Texture/texturePersonnage.png"
 ]
 var txExplo=[
 	#00
@@ -160,6 +160,7 @@ var pressed=[0,0,0,0,0,
 
 var maze
 const roomOff = 3.5
+var level = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -174,6 +175,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	if Input.get_connected_joypads().size() > 0:
+#
 #	pass
 
 func _networkMessage(mess):
@@ -186,6 +188,11 @@ func _networkMessage(mess):
 #				var x=lOffsetExplo[dir][0]
 #				var y=lOffsetExplo[dir][1]
 #				lExplos[dir]=createExplorer(x+campx,y+campy,dir)
+#			var pp = global.playersPresent
+#			if (pp[0] + pp[1] + pp[2] + pp[3] == 4):
+#				var root=get_tree().get_root()
+#				var myself=root.get_child(1)
+#				print ("info ",root,myself)
 
 		'm':	# récupère les variable des dimensions du jeu
 			global.nb_etages = int(mess[1])
@@ -233,8 +240,13 @@ func _networkMessage(mess):
 				xtemp = lExplos[i].translation.x
 				ytemp = lExplos[i].translation.y
 				ztemp = lExplos[i].translation.z
-				lExplos[i] = createExplorer(xtemp,ztemp,i,6)#mess[i+1])
+				lExplos[i] = createExplorer(xtemp,ztemp,i,int(mess[i+1]))
 				lExplos[i].set_translation(Vector3(xtemp,ytemp,ztemp))
+		
+		'o': # ouverture de porte
+			if ( mess[1] == 'y' ):
+				var who = int(mess[2])
+				openDoor(level, getPlayerX(who), getPlayerY(who), int(mess[3]))
 
 func createRoom(x,y,room_num):
 	# Create a new tile instance
@@ -278,17 +290,17 @@ func createRoom(x,y,room_num):
 		# adaptation des position
 		match i:
 			0:
-				ppos.x = -distP
-				vpos.x = -distV
-			1:
-				ppos.z = distP
-				vpos.z = distV
-			2:
-				ppos.x = distP
-				vpos.x = distV
-			3:
 				ppos.z = -distP
 				vpos.z = -distV
+			1:
+				ppos.x = distP
+				vpos.x = distV
+			2:
+				ppos.z = distP
+				vpos.z = distV
+			3:
+				ppos.x = -distP
+				vpos.x = -distV
 		for j in range(4):
 			# création de la Mesh
 			portes[j] = MeshInstance.new()
@@ -297,7 +309,7 @@ func createRoom(x,y,room_num):
 				portes[j].set_translation(ppos)
 			else:
 				portes[j].set_translation(vpos)
-			portes[j].set_rotation(Vector3(0,i*PI/2,0))
+			portes[j].set_rotation(Vector3(0,-PI/2 - i*PI/2,0))
 			# load du modèle
 			portes[j].mesh = load(objDoors[j])
 			#instanciation de la texture
@@ -352,6 +364,40 @@ func buildMaze(etage):
 		for j in range(global.map_size):
 			maze[etage][i][j] = createRoom(2*i*roomOff,2*j*roomOff,maze[etage][i][j])
 
+func getPlayerX(player):
+	var p = lExplos[player]
+	var x = (p.translation.z - lOffsetExplo[player][1]) / (2*roomOff)
+	print("player[",player,"].X = ",x)
+	return x
+
+func getPlayerY(player):
+	var p = lExplos[player]
+	var y = (p.translation.x - lOffsetExplo[player][0]) / (2*roomOff)
+	print("player[",player,"].Y = ",y)
+	return y
+
+func openDoor( etage, roomX, roomY, door):
+	print("x: ", roomX, " y: ", roomY)
+	var room = maze[etage][roomX][roomY];
+	var roomNum = etage * global.map_size * global.map_size + roomX * global.map_size + roomY + 1
+	var roomName = "Piece"
+	if roomNum != 1:
+		roomName += str(roomNum)
+	print(roomName)
+	
+	var roomNode = get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node(roomName)
+	var lDoor
+	var rDoor
+	match door:
+		0:
+			print("ouverture porte 0")
+		1:
+			print("ouverture porte 1")
+		2:
+			print("ouverture porte 2")
+		3:
+			print("ouverture porte 3")
+
 func _on_ButtonMenu_pressed():
 	var root=get_tree().get_root()
 	var myself=root.get_child(1)
@@ -361,30 +407,39 @@ func _on_ButtonMenu_pressed():
 
 
 func _on_ButtonC1_pressed():
-	var connectMessage="C1"
-	print("bouton c1 pressé")
-	global.mplayer.send_bytes(connectMessage.to_ascii())
-	var i = 1
-	if global.playersPresent[i] == 0:
-		print("création d'un nouveau explorateur")
-		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
+	var pp = global.playersPresent
+	if !(pp[0] + pp[1] + pp[2] + pp[3] == 4):
+		var connectMessage="C1"
+		print("bouton c1 pressé")
+		global.mplayer.send_bytes(connectMessage.to_ascii())
+		var i = 1
+		if global.playersPresent[i] == 0:
+			global.playersPresent[i] = 1
+			print("création d'un nouveau explorateur")
+			lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
 
 
 func _on_ButtonC2_pressed():
-	var connectMessage="C2"
-	print("bouton c1 pressé")
-	global.mplayer.send_bytes(connectMessage.to_ascii())
-	var i = 2
-	if global.playersPresent[i] == 0:
-		print("création d'un nouveau explorateur")
-		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
+	var pp = global.playersPresent
+	if !(pp[0] + pp[1] + pp[2] + pp[3] == 4):
+		var connectMessage="C2"
+		print("bouton c1 pressé")
+		global.mplayer.send_bytes(connectMessage.to_ascii())
+		var i = 2
+		if global.playersPresent[i] == 0:
+			global.playersPresent[i] = 1
+			print("création d'un nouveau explorateur")
+			lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
 
 
 func _on_ButtonC3_pressed():
-	var connectMessage="C3"
-	print("bouton c1 pressé")
-	global.mplayer.send_bytes(connectMessage.to_ascii())
-	var i = 3
-	if global.playersPresent[i] == 0:
-		print("création d'un nouveau explorateur")
-		lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
+	var pp = global.playersPresent
+	if !(pp[0] + pp[1] + pp[2] + pp[3] == 4):
+		var connectMessage="C3"
+		print("bouton c1 pressé")
+		global.mplayer.send_bytes(connectMessage.to_ascii())
+		var i = 3
+		if global.playersPresent[i] == 0:
+			global.playersPresent[i] = 1
+			print("création d'un nouveau explorateur")
+			lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)

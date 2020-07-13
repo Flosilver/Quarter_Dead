@@ -55,6 +55,10 @@ const bool Joueur::isAlive() const{
     return hp > 0;
 }
 
+const Vect2i& Joueur::getPawnPosition() const{
+    return pawn.getPosition();
+}
+
 void Joueur::receiveDMG(int dmg){
     hp -= dmg;
 }
