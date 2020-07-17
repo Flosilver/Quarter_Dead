@@ -30,6 +30,13 @@ const bool& Room::isVisited() const{
     return visited;
 }
 
+const bool Room::isDoorOpened(int dir) const{
+    if (dir<0 || dir>3){
+        return false;
+    }
+    return portes[dir];
+}
+
 /* Methode called when a Joueur visite a Room*/
 void Room::activate(Joueur& j){
     visited = true;
@@ -45,4 +52,10 @@ const bool Room::giveShoe(){
         return true;
     }
     return false;
+}
+
+void Room::openDoor(int dir){
+    if ( dir >= 0 && dir <= 3){
+        portes[dir] = true;
+    }
 }

@@ -60,29 +60,23 @@ func _process(delta):
 		if Input.is_joy_button_pressed(0,JOY_BUTTON_0) and pressed[0]==0:
 			pressed[0] = 1
 			print ("A pressed")
-			var doorMessage = "O" + str(global.direction) + str(global.vise)
+			# bouton pour demaner l'ouverture d'une porte
+			var doorMessage = "O" + str(global.direction) + str(global.vise) + str(global.level)
 			global.mplayer.send_bytes(doorMessage.to_ascii())
 		if !Input.is_joy_button_pressed(0,JOY_BUTTON_0) and pressed[0]==1:
 			pressed[0] = 0
 			print ("A released")
 		
-#		if Input.is_joy_button_pressed(0,JOY_BUTTON_1) and pressed[1]==0:
-#			pressed[1]=1
-#			print ("B pressed")
-#
-#			#var cam=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
-#			var dir = global.direction
-#			var joueur = gameNode.lExplos[dir]
-#			var x = joueur.translation.x
-#			var y = joueur.translation.z
-#			 #cam.set_translation(Vector3(x-global.controlGameNode.lOffsetExplo[dir][0],3,y-global.controlGameNode.lOffsetExplo[dir][1]+2))
-#			translation.x = x - gameNode.lOffsetExplo[dir][0]
-#			translation.y = 3
-#			translation.z = y - gameNode.lOffsetExplo[dir][1] + 2
-#
-#		elif !Input.is_joy_button_pressed(0,JOY_BUTTON_1) and pressed[1]==1:
-#			pressed[1]=0
-#			print ("B released")
+		if Input.is_joy_button_pressed(0,JOY_BUTTON_1) and pressed[1]==0:
+			pressed[1]=1
+			print ("B pressed")
+			# bouton pour demander d'entrée dans une salle
+			var entreeMessage = "E" + str(global.direction) + str(global.vise) + str(global.level)
+			global.mplayer.send_bytes(entreeMessage.to_ascii())
+
+		elif !Input.is_joy_button_pressed(0,JOY_BUTTON_1) and pressed[1]==1:
+			pressed[1]=0
+			print ("B released")
 			
 		if Input.is_joy_button_pressed(0,JOY_BUTTON_2) and pressed[2]==0:
 			pressed[2] = 1

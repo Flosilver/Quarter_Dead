@@ -45,16 +45,17 @@ footer %page% of %lastpage%
 
 == Jeu ==
 
-North -> Serv : ouvrir une porte : O0<dir de la porte>
+North -> Serv : ouvrir une porte : O0<dir de la porte><etage>
 note left
 dir est la direction de la porte
 Nord:0, Est:1, Sud:2, Ouest:3
+Indique également l'étage
 endnote
 hnote over Serv : ouverture possible
-Serv -> North : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
-Serv -> East : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
-Serv -> South : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
-Serv -> West : ouverture acceptée : oy<nouv_salle.x><nouv_salle.y><dir>
+Serv -> North : ouverture acceptée : oy0<dir>
+Serv -> East : ouverture acceptée : oy0<dir>
+Serv -> South : ouverture acceptée : oy0<dir>
+Serv -> West : ouverture acceptée : oy0<dir>
 note right
 nouv_salle est la salle
 dont le joueur demande 
@@ -76,10 +77,10 @@ la salle existe
 et
 la salle est ouverte
 endnote
-Serv -> North : lancé accepté : ly1<salle.x><salle.y><dir>
-Serv -> East : lancé accepté : ly1<salle.x><salle.y><dir>
-Serv -> South : lancé accepté : ly1<salle.x><salle.y><dir>
-Serv -> West : lancé accepté : ly1<salle.x><salle.y><dir>
+Serv -> North : lancé accepté : ly1<dir>
+Serv -> East : lancé accepté : ly1<dir>
+Serv -> South : lancé accepté : ly1<dir>
+Serv -> West : lancé accepté : ly1<dir>
 hnote over Serv
 la salle n'existe pas
 ou
@@ -90,21 +91,22 @@ note right : c'est un "L" minuscule ;)
 ...
 |||
 
-South -> Serv : entrer dans une salle : E<dir de la salle>
+South -> Serv : entrer dans une salle : E2<dir de la salle><etage>
 note left
 dir est la direction de la salle
 où le joueur souhaite entrer
 Nord:0, East:1, South:2, West:3
+Indique également l'étage.
 endnote
 hnote over Serv
 la salle existe
 et
 la salle est ouverte
 endnote
-Serv -> North : déplacement accepté : ey2<salle.x><salle.y>
-Serv -> East : déplacement accepté : ey2<salle.x><salle.y>
-Serv -> South : déplacement accepté : ey2<salle.x><salle.y>
-Serv -> West : déplacement accepté : ey2<salle.x><salle.y>
+Serv -> North : déplacement accepté : ey2<dir>
+Serv -> East : déplacement accepté : ey2<dir>
+Serv -> South : déplacement accepté : ey2<dir>
+Serv -> West : déplacement accepté : ey2<dir>
 hnote over Serv
 la salle n'existe pas
 ou
@@ -114,11 +116,11 @@ Serv -> South : déplacement refusé : en
 ...
 |||
 
-South -> Serv : est dans une salle : I2
+South -> Serv : est dans une salle : I2<etage>
 note left
 Indique au serveur que le joueur 2 (South)
 est entré dans une salle et lance un test
-sur la salle.
+sur la salle. Indique également l'étage.
 endnote
 hnote over Serv : check sur la salle
 Serv -> North : update données : i2<typde de room><hp update>

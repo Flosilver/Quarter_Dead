@@ -11,6 +11,7 @@ class Room
     protected:
         int type;
         bool visited = false;
+        bool portes[4] = {false, false, false, false};
 
         int nbChauss = 0;
 
@@ -27,11 +28,14 @@ class Room
         /* Accesseurs */
         const int& getType() const;
         const bool& isVisited() const;
+        const bool isDoorOpened(int dir) const;
 
         /* Methodes */
         void activate(Joueur& j);
         void receiveShoe();
         const bool giveShoe();
+        void openDoor(int dir);
+
 };
 
 

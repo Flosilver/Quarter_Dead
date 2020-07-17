@@ -20,6 +20,7 @@ var nb_etages
 var map_size
 
 var vise = 0
+var level = 0
 
 const NB_J=4
 

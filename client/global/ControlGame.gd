@@ -160,7 +160,6 @@ var pressed=[0,0,0,0,0,
 
 var maze
 const roomOff = 3.5
-var level = 0
 var door_dir = {}
 
 # Called when the node enters the scene tree for the first time.
@@ -246,16 +245,38 @@ func _networkMessage(mess):
 			if ( mess[1] == 'y' ):
 				var who = int(mess[2])
 				var wich = int(mess[3])
-				openDoor(level, getPlayerX(who), getPlayerY(who), wich)
+				openDoor(global.level, getPlayerX(who), getPlayerY(who), wich)
 				match wich:
 					0:
-						openDoor(level, getPlayerX(who)-1, getPlayerY(who), (wich+2)%4)
+						openDoor(global.level, getPlayerX(who)-1, getPlayerY(who), (wich+2)%4)
 					1:
-						openDoor(level, getPlayerX(who), getPlayerY(who)+1, (wich+2)%4)
+						openDoor(global.level, getPlayerX(who), getPlayerY(who)+1, (wich+2)%4)
 					2:
-						openDoor(level, getPlayerX(who)+1, getPlayerY(who), (wich+2)%4)
+						openDoor(global.level, getPlayerX(who)+1, getPlayerY(who), (wich+2)%4)
 					3:
-						openDoor(level, getPlayerX(who), getPlayerY(who)-1, (wich+2)%4)
+						openDoor(global.level, getPlayerX(who), getPlayerY(who)-1, (wich+2)%4)
+		
+		'e': # deplacement dans une salle
+			if mess[1] ==  'y':
+				var who = int(mess[2])
+				var wich = int(mess[3])
+				var deplacement
+				match wich:
+					0:
+						deplacement = Vector3(0,0,-2*roomOff)
+					1:
+						deplacement = Vector3(2*roomOff,0,0)
+					2:
+						deplacement = Vector3(0,0,2*roomOff)
+					3:
+						deplacement = Vector3(-2*roomOff,0,0)
+				lExplos[who].translation.x += deplacement.x
+				lExplos[who].translation.y += deplacement.y
+				lExplos[who].translation.z += deplacement.z
+				var cam=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
+				cam.translation.x += deplacement.x
+				cam.translation.y += deplacement.y
+				cam.translation.z += deplacement.z
 
 func createRoom(x,y,room_num):
 	# Create a new tile instance
@@ -388,23 +409,10 @@ func getPlayerY(player):
 func openDoor( etage, roomX, roomY, door):
 	print("x: ", roomX, " y: ", roomY)
 	var room = maze[etage][roomY][roomX];
-#	var roomNum = etage * global.map_size * global.map_size + roomX * global.map_size + roomY + 1
-#	var roomName = "Piece"
-#	if roomNum != 1:
-#		roomName += str(roomNum)
-#	print(roomName)
-#
-#	var roomNode = get_tree().get_root().get_node("ControlGame").get_node("Spatial")#.get_node(roomName)
 	var lDoor = room.get_child(4*door)
 	var rDoor = room.get_child(4*door+1)
 	var transL = lDoor.translation
 	var transR = rDoor.translation
-#	if door == 0:
-#		lDoor = roomNode.get_node("PorteGauche")
-#		rDoor = roomNode.get_node("PorteDroite")
-#	else:
-#		lDoor = roomNode.get_node("PorteGauche"+str(door+1))
-#		rDoor = roomNode.get_node("PorteDroite"+str(door+1))
 	match door:
 		0:
 			print("porte 0")
@@ -413,8 +421,6 @@ func openDoor( etage, roomX, roomY, door):
 				door_dir[lDoor] = Vector3(transL.x-1,transL.y,transL.z)
 				door_dir[rDoor] = Vector3(transR.x+1,transR.y,transR.z)
 				print("ouverture")
-#				lDoor.translation.x -= 1
-#				rDoor.translation.x += 1
 		1:
 			print("porte 1")
 			if (!door_dir.has_all([lDoor,rDoor])):
@@ -422,8 +428,6 @@ func openDoor( etage, roomX, roomY, door):
 				door_dir[lDoor] = Vector3(transL.x,transL.y,transL.z-1)
 				door_dir[rDoor] = Vector3(transR.x,transR.y,transR.z+1)
 				print("ouverture")
-#				lDoor.translation.z -= 1
-#				rDoor.translation.z += 1
 		2:
 			print("porte 2")
 			if (!door_dir.has_all([lDoor,rDoor])):
@@ -431,8 +435,6 @@ func openDoor( etage, roomX, roomY, door):
 				door_dir[lDoor] = Vector3(transL.x+1,transL.y,transL.z)
 				door_dir[rDoor] = Vector3(transR.x-1,transR.y,transR.z)
 				print("ouverture")
-#				lDoor.translation.x += 1
-#				rDoor.translation.x -= 1
 		3:
 			print("porte 3")
 			if (!door_dir.has_all([lDoor,rDoor])):
@@ -440,8 +442,7 @@ func openDoor( etage, roomX, roomY, door):
 				door_dir[lDoor] = Vector3(transL.x,transL.y,transL.z+1)
 				door_dir[rDoor] = Vector3(transR.x,transR.y,transR.z-1)
 				print("ouverture")
-#				lDoor.translation.z += 1
-#				rDoor.translation.z -= 1
+
 func anim_doors():
 	if door_dir.size() != 0:
 		var pos

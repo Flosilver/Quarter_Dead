@@ -168,11 +168,13 @@ void Quarter_Dead::disconnect(int dir){
 void Quarter_Dead::handleIncomingMessage(){
     cout << "état actuel: " << state << endl;
 
-    int dir;        // direction du joueur qui envoie un message
-    int haz;        // variable de random
-    int temp;       // vairiable temporaire
+    int dir = 0;        // direction du joueur qui envoie un message
+    int haz = 0;        // variable de random
+    int temp = 0;       // vairiable temporaire
     Vect2i pos;     // position du joueur envoyant un message
-    int vise;    // direction que vise le joueur envoyant un message pour son action
+    Vect2i vtemp;   // vecteur 2d d'entiers temporaire
+    int vise = 0;    // direction que vise le joueur envoyant un message pour son action
+    int etage = 0;
 
     switch (state){
         case CONNECTION:
@@ -241,23 +243,86 @@ void Quarter_Dead::handleIncomingMessage(){
         case GAME:
             dir = recMess[1]-'0'; // ascii to int
             switch( recMess[0] ){
+                // Demande d'ouverture de porte
                 case 'O':
-                    vise = recMess[2]-'0';                  // où vise le joueur pour son action000000000000
-                    pos = players[dir]->getPawnPosition();
+                    vise = recMess[2]-'0';                  // où vise le joueur pour son action
+                    pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
+                    etage = recMess[3]-'0';
+
                     if (vise%2 == 0){
-                        temp = pos.x + mouvements[vise].x;
+                        // position de la salle visée
+                        vtemp.x = pos.x + mouvements[vise].x;
+                        vtemp.y = pos.y;
+
+                        // recupération de la coordonnée changeante
+                        temp = vtemp.x;
                     }
                     else{
-                        temp = pos.y + mouvements[vise].y;
+                        // position de la salle vise
+                        vtemp.x = pos.x;
+                        vtemp.y = pos.y + mouvements[vise].y;
+
+                        // récupération de la coordonnée changeante
+                        temp = vtemp.y;
                     }
-                    if (temp < 0 || temp >= MAP_SIZE){      // déplacement impossible
+
+                    // salle inaccessible pour l'action
+                    if (temp < 0 || temp >= MAP_SIZE || maze[etage][pos.x][pos.y]->isDoorOpened(vise)){
                         sprintf(mess, "on");
                         sendBroadcast(mess);
                     }
-                    else{                                   // déplacement possible
+                    // salle accessible pour l'action
+                    else{
                         sprintf(mess, "oy%d%d", dir, vise);
                         sendBroadcast(mess);
+
+                        // ouverture de la porte visée
+                        maze[etage][pos.x][pos.y]->openDoor(vise);
+                        // ouverture de la porte correspondante dans la nouvelle salle
+                        maze[etage][vtemp.x][vtemp.y]->openDoor((vise+2)%4);
                     }
+                    break;
+                
+                case 'E':
+                    vise = recMess[2]-'0';                  // où vise le joueur pour son action
+                    pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
+                    etage = recMess[3]-'0';                 // étage où se trouve le joueur
+
+                    if (vise%2 == 0){
+                        // position de la salle visée
+                        vtemp.x = pos.x + mouvements[vise].x;
+                        vtemp.y = pos.y;
+
+                        // recupération de la coordonnée changeante
+                        temp = vtemp.x;
+                    }
+                    else{
+                        // position de la salle vise
+                        vtemp.x = pos.x;
+                        vtemp.y = pos.y + mouvements[vise].y;
+
+                        // récupération de la coordonnée changeante
+                        temp = vtemp.y;
+                    }
+
+                    //deplacement impossible
+                    if (temp < 0 || temp >= MAP_SIZE || !maze[etage][pos.x][pos.y]->isDoorOpened(vise)){
+                        sprintf(mess, "en");
+                        sendBroadcast(mess);
+                    }
+                    // déplacement possible
+                    else{
+                        sprintf(mess, "ey%d%d", dir, vise);
+                        sendBroadcast(mess);
+
+                        // déplacement du joueur dans la salle visée
+                        players[dir]->movePawnTo(vtemp);
+                    }
+                    break;
+                
+                case 'I':
+                    pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
+                    etage = recMess[2]-'0';
                     break;
                 
                 default:
