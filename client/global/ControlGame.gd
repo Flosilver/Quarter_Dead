@@ -161,6 +161,7 @@ var pressed=[0,0,0,0,0,
 var maze
 const roomOff = 3.5
 var level = 0
+var door_dir = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -173,10 +174,8 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	if Input.get_connected_joypads().size() > 0:
-#
-#	pass
+func _process(delta):
+	anim_doors()
 
 func _networkMessage(mess):
 	print ("_networkMessage=",mess)
@@ -246,7 +245,17 @@ func _networkMessage(mess):
 		'o': # ouverture de porte
 			if ( mess[1] == 'y' ):
 				var who = int(mess[2])
-				openDoor(level, getPlayerX(who), getPlayerY(who), int(mess[3]))
+				var wich = int(mess[3])
+				openDoor(level, getPlayerX(who), getPlayerY(who), wich)
+				match wich:
+					0:
+						openDoor(level, getPlayerX(who)-1, getPlayerY(who), (wich+2)%4)
+					1:
+						openDoor(level, getPlayerX(who), getPlayerY(who)+1, (wich+2)%4)
+					2:
+						openDoor(level, getPlayerX(who)+1, getPlayerY(who), (wich+2)%4)
+					3:
+						openDoor(level, getPlayerX(who), getPlayerY(who)-1, (wich+2)%4)
 
 func createRoom(x,y,room_num):
 	# Create a new tile instance
@@ -367,36 +376,92 @@ func buildMaze(etage):
 func getPlayerX(player):
 	var p = lExplos[player]
 	var x = (p.translation.z - lOffsetExplo[player][1]) / (2*roomOff)
-	print("player[",player,"].X = ",x)
+	#print("player[",player,"].X = ",x)
 	return x
 
 func getPlayerY(player):
 	var p = lExplos[player]
 	var y = (p.translation.x - lOffsetExplo[player][0]) / (2*roomOff)
-	print("player[",player,"].Y = ",y)
+	#print("player[",player,"].Y = ",y)
 	return y
 
 func openDoor( etage, roomX, roomY, door):
 	print("x: ", roomX, " y: ", roomY)
-	var room = maze[etage][roomX][roomY];
-	var roomNum = etage * global.map_size * global.map_size + roomX * global.map_size + roomY + 1
-	var roomName = "Piece"
-	if roomNum != 1:
-		roomName += str(roomNum)
-	print(roomName)
-	
-	var roomNode = get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node(roomName)
-	var lDoor
-	var rDoor
+	var room = maze[etage][roomY][roomX];
+#	var roomNum = etage * global.map_size * global.map_size + roomX * global.map_size + roomY + 1
+#	var roomName = "Piece"
+#	if roomNum != 1:
+#		roomName += str(roomNum)
+#	print(roomName)
+#
+#	var roomNode = get_tree().get_root().get_node("ControlGame").get_node("Spatial")#.get_node(roomName)
+	var lDoor = room.get_child(4*door)
+	var rDoor = room.get_child(4*door+1)
+	var transL = lDoor.translation
+	var transR = rDoor.translation
+#	if door == 0:
+#		lDoor = roomNode.get_node("PorteGauche")
+#		rDoor = roomNode.get_node("PorteDroite")
+#	else:
+#		lDoor = roomNode.get_node("PorteGauche"+str(door+1))
+#		rDoor = roomNode.get_node("PorteDroite"+str(door+1))
 	match door:
 		0:
-			print("ouverture porte 0")
+			print("porte 0")
+			if (!door_dir.has_all([lDoor,rDoor])):
+				print("les portes étaient fermées")
+				door_dir[lDoor] = Vector3(transL.x-1,transL.y,transL.z)
+				door_dir[rDoor] = Vector3(transR.x+1,transR.y,transR.z)
+				print("ouverture")
+#				lDoor.translation.x -= 1
+#				rDoor.translation.x += 1
 		1:
-			print("ouverture porte 1")
+			print("porte 1")
+			if (!door_dir.has_all([lDoor,rDoor])):
+				print("les portes étaient fermées")
+				door_dir[lDoor] = Vector3(transL.x,transL.y,transL.z-1)
+				door_dir[rDoor] = Vector3(transR.x,transR.y,transR.z+1)
+				print("ouverture")
+#				lDoor.translation.z -= 1
+#				rDoor.translation.z += 1
 		2:
-			print("ouverture porte 2")
+			print("porte 2")
+			if (!door_dir.has_all([lDoor,rDoor])):
+				print("les portes étaient fermées")
+				door_dir[lDoor] = Vector3(transL.x+1,transL.y,transL.z)
+				door_dir[rDoor] = Vector3(transR.x-1,transR.y,transR.z)
+				print("ouverture")
+#				lDoor.translation.x += 1
+#				rDoor.translation.x -= 1
 		3:
-			print("ouverture porte 3")
+			print("porte 3")
+			if (!door_dir.has_all([lDoor,rDoor])):
+				print("les portes étaient fermées")
+				door_dir[lDoor] = Vector3(transL.x,transL.y,transL.z+1)
+				door_dir[rDoor] = Vector3(transR.x,transR.y,transR.z-1)
+				print("ouverture")
+#				lDoor.translation.z += 1
+#				rDoor.translation.z -= 1
+func anim_doors():
+	if door_dir.size() != 0:
+		var pos
+		var target
+		for mesh in door_dir:
+			pos = mesh.translation
+			target = door_dir[mesh]
+			if pos != target:
+#				print("mesh: ", mesh)
+#				print("pos: ", pos, "  target: ", target)
+				if abs(pos.x - target.x) > 0.02 :
+#					print("deplacement selon x")
+#					print("pos.x: ", pos.x, "  target.x: ", target.x)
+					mesh.translation.x = pos.x + abs(target.x-pos.x)/(target.x-pos.x) * 0.02
+#					pos.x += abs(target.x-pos.x)/(target.x-pos.x) * 0.05
+				if abs(pos.z - target.z) > 0.02 :
+#					print("deplacement selon z")
+#					print("pos.z: ", pos.z, "  target.z: ", target.z)
+					mesh.translation.z = pos.z + abs(target.z-pos.z)/(target.z-pos.z) * 0.02
+#					pos.z += abs(target.z-pos.z)/(target.z-pos.z) * 0.05
 
 func _on_ButtonMenu_pressed():
 	var root=get_tree().get_root()
@@ -423,7 +488,7 @@ func _on_ButtonC2_pressed():
 	var pp = global.playersPresent
 	if !(pp[0] + pp[1] + pp[2] + pp[3] == 4):
 		var connectMessage="C2"
-		print("bouton c1 pressé")
+		print("bouton c2 pressé")
 		global.mplayer.send_bytes(connectMessage.to_ascii())
 		var i = 2
 		if global.playersPresent[i] == 0:
@@ -436,7 +501,7 @@ func _on_ButtonC3_pressed():
 	var pp = global.playersPresent
 	if !(pp[0] + pp[1] + pp[2] + pp[3] == 4):
 		var connectMessage="C3"
-		print("bouton c1 pressé")
+		print("bouton c3 pressé")
 		global.mplayer.send_bytes(connectMessage.to_ascii())
 		var i = 3
 		if global.playersPresent[i] == 0:
