@@ -39,19 +39,24 @@ void Trap::activate(Joueur& j){
     switch (j.getRole())
     {
         case role_t::Acrobate :
+            // test d'esquive de l'acrobate
             haz = rand()%101;
             if (haz >= j.getAgility()){
+                // test échoué
                 j.receiveDMG(dmg);
             }
             break;
 
         case role_t::Robot :
+            // robot se fait soigné par l'éléctricité
             if( element == element_t::Thunder ){
                 j.receiveDMG(-dmg/2);
             }
+            // robot se fait one-shot par l'eau
             else if( element == element_t::Water ){
                 j.receiveDMG(j.getHP());
             }
+            // dans les autres cas le robots prends les dégats normaux
             else{
                 j.receiveDMG(dmg);
             }
@@ -59,9 +64,11 @@ void Trap::activate(Joueur& j){
             break;
 
         case role_t::Homme_chat :
+            // si l'attaque devait tuer, l'homme-chat renait
             if ( j.getHP() - dmg <= 0 ){
                 j.giveRole(role_t::Homme_chat2);
             }
+            // sinon il prend les dégats
             else{
                 j.receiveDMG(dmg);
             }
@@ -69,6 +76,7 @@ void Trap::activate(Joueur& j){
             break;
         
         default:
+            // dans tous les autres cas, le joueur prend les dégats de la room
             j.receiveDMG(dmg);
 
             break;

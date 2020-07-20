@@ -16,4 +16,7 @@ Fatal& Fatal::operator=(const Fatal& f){
 
 void Fatal::activate(Joueur& j){
     j.receiveDMG(j.getHP());
+    if (j.getRole() == role_t::Homme_chat){
+        j.giveRole(role_t::Homme_chat2);
+    }
 }

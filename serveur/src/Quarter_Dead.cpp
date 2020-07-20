@@ -242,12 +242,15 @@ void Quarter_Dead::handleIncomingMessage(){
 
         case GAME:
             dir = recMess[1]-'0'; // ascii to int
+            pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
+            //cout << "position du joueur: " << pos << endl;
+
             switch( recMess[0] ){
+
                 // Demande d'ouverture de porte
                 case 'O':
                     vise = recMess[2]-'0';                  // où vise le joueur pour son action
-                    pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
-                    etage = recMess[3]-'0';
+                    etage = recMess[3]-'0';                 // etage où se trouve le joueur
 
                     if (vise%2 == 0){
                         // position de la salle visée
@@ -266,6 +269,8 @@ void Quarter_Dead::handleIncomingMessage(){
                         temp = vtemp.y;
                     }
 
+                    //cout << "position de la salle visée: " << vtemp << endl;
+
                     // salle inaccessible pour l'action
                     if (temp < 0 || temp >= MAP_SIZE || maze[etage][pos.x][pos.y]->isDoorOpened(vise)){
                         sprintf(mess, "on");
@@ -282,10 +287,10 @@ void Quarter_Dead::handleIncomingMessage(){
                         maze[etage][vtemp.x][vtemp.y]->openDoor((vise+2)%4);
                     }
                     break;
-                
+
+                // demande d'entrée dans une salle
                 case 'E':
                     vise = recMess[2]-'0';                  // où vise le joueur pour son action
-                    pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
                     etage = recMess[3]-'0';                 // étage où se trouve le joueur
 
                     if (vise%2 == 0){
@@ -305,6 +310,8 @@ void Quarter_Dead::handleIncomingMessage(){
                         temp = vtemp.y;
                     }
 
+                    //cout << "position de la salle visée: " << vtemp << endl;
+
                     //deplacement impossible
                     if (temp < 0 || temp >= MAP_SIZE || !maze[etage][pos.x][pos.y]->isDoorOpened(vise)){
                         sprintf(mess, "en");
@@ -317,12 +324,18 @@ void Quarter_Dead::handleIncomingMessage(){
 
                         // déplacement du joueur dans la salle visée
                         players[dir]->movePawnTo(vtemp);
+                        //cout << "new pos: " << players[dir]->getPawnPosition() << endl;
                     }
                     break;
                 
+                // indique que le joueur est effectivement dans la salle où il est entrée
                 case 'I':
-                    pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
                     etage = recMess[2]-'0';
+
+                    // faire que le joueur visite la salle
+                    players[dir]->visite(maze[etage][pos.x][pos.y]);
+
+                    // créer le message avec les updates de hp, chaussure, etc...
                     break;
                 
                 default:

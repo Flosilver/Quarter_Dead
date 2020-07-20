@@ -161,6 +161,7 @@ var pressed=[0,0,0,0,0,
 var maze
 const roomOff = 3.5
 var door_dir = {}
+var lTargets = [null,null,null,null]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -270,13 +271,19 @@ func _networkMessage(mess):
 						deplacement = Vector3(0,0,2*roomOff)
 					3:
 						deplacement = Vector3(-2*roomOff,0,0)
-				lExplos[who].translation.x += deplacement.x
-				lExplos[who].translation.y += deplacement.y
-				lExplos[who].translation.z += deplacement.z
-				var cam=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
-				cam.translation.x += deplacement.x
-				cam.translation.y += deplacement.y
-				cam.translation.z += deplacement.z
+				lExplos[who].translation += deplacement
+				lTargets[who] = lExplos[who].translation
+				print("target: ", lTargets[who])
+#				lExplos[who].translation.x += deplacement.x
+#				lExplos[who].translation.y += deplacement.y
+#				lExplos[who].translation.z += deplacement.z
+				if who == global.direction:
+					var cam = get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
+					var t = lTargets[who]
+					t.x -= lOffsetExplo[who][0]
+					t.y = 2
+					t.z -= lOffsetExplo[who][1]
+					cam.setTarget(t)
 
 func createRoom(x,y,room_num):
 	# Create a new tile instance
