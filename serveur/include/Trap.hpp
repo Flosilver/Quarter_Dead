@@ -26,7 +26,7 @@ class Trap : public Room
         const int& getElement() const;
 
         /* Methodes */
-        void activate(Joueur& j);
+        const int activate(Joueur& j);
 };
 
 #endif

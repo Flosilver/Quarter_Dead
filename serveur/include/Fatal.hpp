@@ -16,7 +16,7 @@ class Fatal : public Room
         Fatal& operator=(const Fatal& f);
 
         /* Methodes */
-        void activate(Joueur& j);
+        const int activate(Joueur& j);
 };
 
 #endif

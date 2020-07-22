@@ -34,8 +34,14 @@ const int& Trap::getElement() const{
 }
 
 /* Methode called when a Joueur visite a Room*/
-void Trap::activate(Joueur& j){
+const int Trap::activate(Joueur& j){
     int haz = 100;
+
+    // on ferme les portes vitrées de la salle
+    for (int i = 0 ; i<4 ; i++){
+        closeVitre(i);
+    }
+
     switch (j.getRole())
     {
         case role_t::Acrobate :
@@ -83,4 +89,5 @@ void Trap::activate(Joueur& j){
     }
     
     visited = true;
+    return 1;   // il se passe qqchose
 }

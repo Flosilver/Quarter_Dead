@@ -21,7 +21,7 @@ class Goal : public Room
         /* Accesseurs */
 
         /* Methodes */
-        void activate(Joueur& j);        
+        const int activate(Joueur& j);        
 };
 
 #endif

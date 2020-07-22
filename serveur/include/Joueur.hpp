@@ -37,7 +37,7 @@ class Joueur : public Player
         /* Methodes */
         void receiveDMG(int dmg);
         void giveRole(int r);
-        void visite(sp_Room& spr);
+        const int visite(sp_Room& spr);
         const bool throwShoe(sp_Room& spr);
         const bool pickUpShoe(sp_Room& spr);
 

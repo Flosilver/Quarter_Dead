@@ -137,3 +137,5 @@ func move():
 		else:
 			print("mouv a 0")
 			mouvT = 0
+			var inMessage = "I" + str(global.direction)
+			global.mplayer.send_bytes(inMessage.to_ascii())

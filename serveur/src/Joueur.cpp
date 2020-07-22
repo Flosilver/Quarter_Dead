@@ -136,11 +136,11 @@ void Joueur::giveRole(int r){
     }
 }
 
-void Joueur::visite(sp_Room& spr){
+const int Joueur::visite(sp_Room& spr){
     if ( !spr->isVisited() ){
-        spr->activate(*this);
+        return spr->activate(*this);
     }
-
+    return 0;   // il ne se passe rien
     /*if (role == role_t::Devin){
         if (spr->getType() == room_t::DEVIN){
             // SHIT TODO

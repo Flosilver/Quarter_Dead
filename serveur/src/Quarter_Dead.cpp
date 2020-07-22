@@ -312,8 +312,8 @@ void Quarter_Dead::handleIncomingMessage(){
 
                     //cout << "position de la salle visée: " << vtemp << endl;
 
-                    //deplacement impossible
-                    if (temp < 0 || temp >= MAP_SIZE || !maze[etage][pos.x][pos.y]->isDoorOpened(vise)){
+                    //deplacement impossible = indices impossibles / portes visée fermée / porte vitrée de l'autre coté fermée
+                    if (temp < 0 || temp >= MAP_SIZE || !maze[etage][pos.x][pos.y]->isDoorOpen(vise) || !maze[etage][vtemp.x][vtemp.y]->isVitreOpen((vise+2)%4)){
                         sprintf(mess, "en");
                         sendBroadcast(mess);
                     }
@@ -333,7 +333,32 @@ void Quarter_Dead::handleIncomingMessage(){
                     etage = recMess[2]-'0';
 
                     // faire que le joueur visite la salle
-                    players[dir]->visite(maze[etage][pos.x][pos.y]);
+                    cout << "le joueur visite la pièce" << endl;
+                    switch (players[dir]->visite(maze[etage][pos.x][pos.y])){
+                        case 1:
+                            // TRAP ou FATAL non activé
+                            cout << "c'est un piège" << endl;
+                            
+                            // on indique au client de fermer les portes vitrées
+                            sprintf(mess, "t%d%d", pos.x, pos.y);
+                            sendBroadcast(mess);
+
+                            break;
+                        
+                        case 2:
+                            // GOAL
+                            cout << "le joueur à fini l'étage" << endl;
+
+                            // on indique à tout le monde que le joueur à fini le niveau et indique le nouvel étage
+                            sprintf(mess, "g%d%d", dir, etage+1);
+                            break;
+                        
+                        default:
+                            // tout le reste
+                            cout << "il ne se passe rien" << endl;
+                            break;
+                    }
+                    
 
                     // créer le message avec les updates de hp, chaussure, etc...
                     break;

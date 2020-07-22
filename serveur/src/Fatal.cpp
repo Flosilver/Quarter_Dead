@@ -14,9 +14,18 @@ Fatal& Fatal::operator=(const Fatal& f){
     return *this;
 }
 
-void Fatal::activate(Joueur& j){
+const int Fatal::activate(Joueur& j){
+
+    // on ferme les portes vitrées de la salle
+    for (int i = 0 ; i<4 ; i++){
+        closeVitre(i);
+    }
+
     j.receiveDMG(j.getHP());
     if (j.getRole() == role_t::Homme_chat){
         j.giveRole(role_t::Homme_chat2);
     }
+
+    visited = true;
+    return 1;   // il se passe qqchose
 }
