@@ -44,6 +44,10 @@ const bool Room::isVitreOpen(int dir) const{
     return portes[dir];
 }
 
+const bool Room::hasShoe() const{
+    return nbChauss > 0;
+}
+
 /* Methode called when a Joueur visite a Room*/
 const int Room::activate(Joueur& j){
     visited = true;
@@ -54,12 +58,13 @@ void Room::receiveShoe(){
     nbChauss++;
 }
 
-const bool Room::giveShoe(){
+void Room::giveShoe(){
     if(nbChauss > 0){
         nbChauss--;
-        return true;
     }
-    return false;
+    else{
+        cerr << "***ERROR: Room::giveShoe() : not supposed to be called" << endl;
+    }
 }
 
 void Room::openDoor(int dir){

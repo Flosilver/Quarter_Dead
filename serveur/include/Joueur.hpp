@@ -12,6 +12,7 @@ class Joueur : public Player
         int hp;
         int agility;
         int role;
+        int etage;
 
         int nbChauss;
         int nbMaxChauss;
@@ -33,6 +34,8 @@ class Joueur : public Player
         const int& getRole() const;
         const bool isAlive() const;
         const Vect2i& getPawnPosition() const;
+        const int& getNbChauss() const;
+        const int& getEtage() const;
 
         /* Methodes */
         void receiveDMG(int dmg);
@@ -40,6 +43,7 @@ class Joueur : public Player
         const int visite(sp_Room& spr);
         const bool throwShoe(sp_Room& spr);
         const bool pickUpShoe(sp_Room& spr);
+        void climb();
 
         void movePawn(const Vect2i& v);
         void movePawnTo(const Vect2i& v);

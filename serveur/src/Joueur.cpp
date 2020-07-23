@@ -5,6 +5,7 @@ Joueur::Joueur(): rsc::Player()
     hp = 0;
     agility = 0;
     role = -1;
+    etage = 0;
 
     nbChauss = 2;
     nbMaxChauss = 2;
@@ -17,6 +18,7 @@ Joueur::Joueur(int aDir): rsc::Player(aDir){
     hp = 0;
     agility = 0;
     role = -1;
+    etage = 0;
 
     nbChauss = 2;
     nbMaxChauss = 2;
@@ -31,6 +33,7 @@ Joueur& Joueur::operator=(const Joueur& j){
     hp = j.hp;
     agility = j.agility;
     role = j.role;
+    etage = j.etage;
 
     nbChauss = j.nbChauss;
     nbMaxChauss = j.nbMaxChauss;
@@ -57,6 +60,14 @@ const bool Joueur::isAlive() const{
 
 const Vect2i& Joueur::getPawnPosition() const{
     return pawn.getPosition();
+}
+
+const int& Joueur::getNbChauss() const{
+    return nbChauss;
+}
+
+const int& Joueur::getEtage() const{
+    return etage;
 }
 
 void Joueur::receiveDMG(int dmg){
@@ -137,10 +148,15 @@ void Joueur::giveRole(int r){
 }
 
 const int Joueur::visite(sp_Room& spr){
+    // le joueur récupère autant de chaussure que possible dans la salle
+    while( pickUpShoe(spr) ){}
+
+    // on active la salle si celle-ci n'a pas déjà été visitée
     if ( !spr->isVisited() ){
         return spr->activate(*this);
     }
     return 0;   // il ne se passe rien
+
     /*if (role == role_t::Devin){
         if (spr->getType() == room_t::DEVIN){
             // SHIT TODO
@@ -158,11 +174,16 @@ const bool Joueur::throwShoe(sp_Room& spr){
 }
 
 const bool Joueur::pickUpShoe(sp_Room& spr){
-    if ( spr->giveShoe() && ((nbChauss + 1) <= nbMaxChauss) ){
+    if ( spr->hasShoe() && ((nbChauss + 1) <= nbMaxChauss) ){
+        spr->giveShoe();
         nbChauss++;
         return true;
     }
     return false;
+}
+
+void Joueur::climb(){
+    etage++;
 }
 
 void Joueur::movePawn(const Vect2i& v){

@@ -165,6 +165,11 @@ void Quarter_Dead::disconnect(int dir){
     nbConnectes--;
 }
 
+void Quarter_Dead::write_Info_Update_Mess(char* dest, int dir, int etage){
+    // i<dir><etage><hp><nbChauss>
+    sprintf(dest, "i%d%d%d%d", dir, etage, players[dir]->getHP(), players[dir]->getNbChauss());
+}
+
 void Quarter_Dead::handleIncomingMessage(){
     cout << "état actuel: " << state << endl;
 
@@ -243,6 +248,7 @@ void Quarter_Dead::handleIncomingMessage(){
         case GAME:
             dir = recMess[1]-'0'; // ascii to int
             pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
+            etage = players[dir]->getEtage();
             //cout << "position du joueur: " << pos << endl;
 
             switch( recMess[0] ){
@@ -250,7 +256,6 @@ void Quarter_Dead::handleIncomingMessage(){
                 // Demande d'ouverture de porte
                 case 'O':
                     vise = recMess[2]-'0';                  // où vise le joueur pour son action
-                    etage = recMess[3]-'0';                 // etage où se trouve le joueur
 
                     if (vise%2 == 0){
                         // position de la salle visée
@@ -272,7 +277,7 @@ void Quarter_Dead::handleIncomingMessage(){
                     //cout << "position de la salle visée: " << vtemp << endl;
 
                     // salle inaccessible pour l'action
-                    if (temp < 0 || temp >= MAP_SIZE || maze[etage][pos.x][pos.y]->isDoorOpened(vise)){
+                    if (temp < 0 || temp >= MAP_SIZE || maze[etage][pos.x][pos.y]->isDoorOpen(vise)){
                         sprintf(mess, "on");
                         sendBroadcast(mess);
                     }
@@ -291,7 +296,6 @@ void Quarter_Dead::handleIncomingMessage(){
                 // demande d'entrée dans une salle
                 case 'E':
                     vise = recMess[2]-'0';                  // où vise le joueur pour son action
-                    etage = recMess[3]-'0';                 // étage où se trouve le joueur
 
                     if (vise%2 == 0){
                         // position de la salle visée
@@ -312,11 +316,12 @@ void Quarter_Dead::handleIncomingMessage(){
 
                     //cout << "position de la salle visée: " << vtemp << endl;
 
-                    //deplacement impossible = indices impossibles / portes visée fermée / porte vitrée de l'autre coté fermée
+                    //deplacement impossible = indices impossibles / porte visée fermée / porte vitrée de l'autre coté fermée
                     if (temp < 0 || temp >= MAP_SIZE || !maze[etage][pos.x][pos.y]->isDoorOpen(vise) || !maze[etage][vtemp.x][vtemp.y]->isVitreOpen((vise+2)%4)){
                         sprintf(mess, "en");
                         sendBroadcast(mess);
                     }
+
                     // déplacement possible
                     else{
                         sprintf(mess, "ey%d%d", dir, vise);
@@ -330,32 +335,71 @@ void Quarter_Dead::handleIncomingMessage(){
                 
                 // indique que le joueur est effectivement dans la salle où il est entrée
                 case 'I':
-                    etage = recMess[2]-'0';
-
                     // faire que le joueur visite la salle
                     cout << "le joueur visite la pièce" << endl;
+                    // la visite met à jour les données du joueur
                     switch (players[dir]->visite(maze[etage][pos.x][pos.y])){
-                        case 1:
-                            // TRAP ou FATAL non activé
+                        case 1: // TRAP ou FATAL non activé
                             cout << "c'est un piège" << endl;
                             
                             // on indique au client de fermer les portes vitrées
-                            sprintf(mess, "t%d%d", pos.x, pos.y);
+                            sprintf(mess, "t%d%d%d", etage, pos.x, pos.y);
                             sendBroadcast(mess);
+
+                            // Fatal + en vie -> resurection de l'Homme chat
+                            if ( maze[etage][pos.x][pos.y]->getType() == room_t::FATAL && players[dir]->isAlive() ){
+                                // message de resurection du joueur
+                                sprintf(mess, "s%d", dir);
+                                sendBroadcast(mess);
+                                
+                                // update des infos
+                                write_Info_Update_Mess(mess, dir, etage);
+                                sendBroadcast(mess);
+                            }
+                            // si le joueur a survécu au piège on update ses infos
+                            else if ( players[dir]->isAlive() ){
+                                // update des infos
+                                write_Info_Update_Mess(mess, dir, etage);
+                                sendBroadcast(mess);
+                            }
+                            // sinon on indique a tout le monde sa mort
+                            else{
+                                // toutes ses chaussures sont dispersées dans la salle
+                                while (players[dir]->throwShoe(maze[etage][pos.x][pos.y]) && maze[etage][pos.x][pos.y]->getType() != room_t::FATAL){}   // les chaussures tombent dans la salle si celle-ci n'est pas Fatal
+                                sprintf(mess, "m%d", dir);
+                                sendBroadcast(mess);
+                            }
 
                             break;
                         
-                        case 2:
-                            // GOAL
+                        case 2: // GOAL
                             cout << "le joueur à fini l'étage" << endl;
 
+                            // on test si le joueur a fini le dernier étage
+                            if ( etage+1 >= NB_ETAGES ){
+                                // message de victoire
+                                sprintf(mess, "w%d", dir);
+                                sendBroadcast(mess);
+                            }
+                            // sinon, le joueur monte d'un niveau
+                            else{
+                                players[dir]->climb();
+
+                                // message enclenchant la génération du nouvel étage
+                                sprintf(mess, "g%d")
+                            }
                             // on indique à tout le monde que le joueur à fini le niveau et indique le nouvel étage
                             sprintf(mess, "g%d%d", dir, etage+1);
                             break;
                         
-                        default:
-                            // tout le reste
+                        default: // tout le reste
                             cout << "il ne se passe rien" << endl;
+                            players[dir]->pickUpShoe(maze[etage][pos.x][pos.y]);
+
+                            // construction du message
+                            write_Info_Update_Mess(mess, dir, etage);
+                            sendBroadcast(mess);
+
                             break;
                     }
                     

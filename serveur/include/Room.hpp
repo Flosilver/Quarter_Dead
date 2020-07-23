@@ -31,11 +31,12 @@ class Room
         const bool& isVisited() const;
         const bool isDoorOpen(int dir) const;
         const bool isVitreOpen(int dir) const;
+        const bool hasShoe() const;
 
         /* Methodes */
         const int activate(Joueur& j);
         void receiveShoe();
-        const bool giveShoe();
+        void giveShoe();
         void openDoor(int dir);
         void closeVitre(int dir);
         void openVitre(int dir);

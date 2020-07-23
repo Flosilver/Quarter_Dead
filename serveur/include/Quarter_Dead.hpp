@@ -40,6 +40,7 @@ class Quarter_Dead : public rsc::Game
         const bool& isConnected(int dir) const;
         void connect(int dir);
         void disconnect(int dir);
+        void write_Info_Update_Mess(char* dest, int dir, int etage);
 
         /* Methodes de Game */
         void handleIncomingMessage();

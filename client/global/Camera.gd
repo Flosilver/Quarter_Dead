@@ -64,7 +64,7 @@ func _process(delta):
 			pressed[0] = 1
 			print ("A pressed")
 			# bouton pour demaner l'ouverture d'une porte
-			var doorMessage = "O" + str(global.direction) + str(global.vise) + str(global.level)
+			var doorMessage = "O" + str(global.direction) + str(global.vise)# + str(global.level)
 			global.mplayer.send_bytes(doorMessage.to_ascii())
 		if !Input.is_joy_button_pressed(0,JOY_BUTTON_0) and pressed[0]==1:
 			pressed[0] = 0
@@ -74,7 +74,7 @@ func _process(delta):
 			pressed[1]=1
 			print ("B pressed")
 			# bouton pour demander d'entrée dans une salle
-			var entreeMessage = "E" + str(global.direction) + str(global.vise) + str(global.level)
+			var entreeMessage = "E" + str(global.direction) + str(global.vise)# + str(global.level)
 			global.mplayer.send_bytes(entreeMessage.to_ascii())
 
 		elif !Input.is_joy_button_pressed(0,JOY_BUTTON_1) and pressed[1]==1:
