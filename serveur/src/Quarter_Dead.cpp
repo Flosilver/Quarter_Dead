@@ -165,9 +165,9 @@ void Quarter_Dead::disconnect(int dir){
     nbConnectes--;
 }
 
-void Quarter_Dead::write_Info_Update_Mess(char* dest, int dir, int etage){
+void Quarter_Dead::write_Info_Update_Mess(char* dest, int dir){
     // i<dir><etage><hp><nbChauss>
-    sprintf(dest, "i%d%d%d%d", dir, etage, players[dir]->getHP(), players[dir]->getNbChauss());
+    sprintf(dest, "i %d %d %d %d", dir, players[dir]->getEtage(), players[dir]->getHP(), players[dir]->getNbChauss());
 }
 
 void Quarter_Dead::handleIncomingMessage(){
@@ -240,6 +240,10 @@ void Quarter_Dead::handleIncomingMessage(){
                     sendBroadcast(mess);
                     for (int i=0 ; i<NB_J_MAX ; i++){
                         players[i]->giveRole(roles[i]);
+
+                        // premier envoie des infos
+                        write_Info_Update_Mess(mess,i);
+                        sendBroadcast(mess);
                     }
                 }
             }
@@ -336,7 +340,7 @@ void Quarter_Dead::handleIncomingMessage(){
                 // indique que le joueur est effectivement dans la salle où il est entrée
                 case 'I':
                     // faire que le joueur visite la salle
-                    cout << "le joueur visite la pièce" << endl;
+                    cout << "le joueur visite la pièce" << "\ttype: " << maze[etage][pos.x][pos.y]->getType() << endl;
                     // la visite met à jour les données du joueur
                     switch (players[dir]->visite(maze[etage][pos.x][pos.y])){
                         case 1: // TRAP ou FATAL non activé
@@ -353,13 +357,13 @@ void Quarter_Dead::handleIncomingMessage(){
                                 sendBroadcast(mess);
                                 
                                 // update des infos
-                                write_Info_Update_Mess(mess, dir, etage);
+                                write_Info_Update_Mess(mess, dir);
                                 sendBroadcast(mess);
                             }
                             // si le joueur a survécu au piège on update ses infos
                             else if ( players[dir]->isAlive() ){
                                 // update des infos
-                                write_Info_Update_Mess(mess, dir, etage);
+                                write_Info_Update_Mess(mess, dir);
                                 sendBroadcast(mess);
                             }
                             // sinon on indique a tout le monde sa mort
@@ -385,11 +389,10 @@ void Quarter_Dead::handleIncomingMessage(){
                             else{
                                 players[dir]->climb();
 
-                                // message enclenchant la génération du nouvel étage
-                                sprintf(mess, "g%d")
+                                // message indiquant le changement d'étage d'un joueur
+                                sprintf(mess, "g%d", dir);
+                                sendBroadcast(mess);
                             }
-                            // on indique à tout le monde que le joueur à fini le niveau et indique le nouvel étage
-                            sprintf(mess, "g%d%d", dir, etage+1);
                             break;
                         
                         default: // tout le reste
@@ -397,7 +400,7 @@ void Quarter_Dead::handleIncomingMessage(){
                             players[dir]->pickUpShoe(maze[etage][pos.x][pos.y]);
 
                             // construction du message
-                            write_Info_Update_Mess(mess, dir, etage);
+                            write_Info_Update_Mess(mess, dir);
                             sendBroadcast(mess);
 
                             break;

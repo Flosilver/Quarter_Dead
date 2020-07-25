@@ -127,15 +127,15 @@ func setTarget(t):
 func move():
 	if target != null and mouvT == 1 and mouvR == 0:
 		var d = target - translation
-		print(d.length())
+#		print(d.length())
 		if d.length() >= 0.01:
-			print("---")
-			print("d.x: ",d.x,"  d.y: ",d.y,"  d.z: ",d.z)
+#			print("---")
+#			print("d.x: ",d.x,"  d.y: ",d.y,"  d.z: ",d.z)
 			var d2 = (d.normalized())/10
-			print("d.x: ",d2.x,"  d.y: ",d2.y,"  d.z: ",d2.z)
+#			print("d.x: ",d2.x,"  d.y: ",d2.y,"  d.z: ",d2.z)
 			translation += d2
 		else:
-			print("mouv a 0")
+#			print("mouv a 0")
 			mouvT = 0
 			var inMessage = "I" + str(global.direction)
 			global.mplayer.send_bytes(inMessage.to_ascii())

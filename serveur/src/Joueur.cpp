@@ -153,6 +153,7 @@ const int Joueur::visite(sp_Room& spr){
 
     // on active la salle si celle-ci n'a pas déjà été visitée
     if ( !spr->isVisited() ){
+        cout << "test inside: " << spr->getType() << endl;
         return spr->activate(*this);
     }
     return 0;   // il ne se passe rien

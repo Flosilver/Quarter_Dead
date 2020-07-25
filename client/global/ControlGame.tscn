@@ -1,7 +1,23 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://ControlGame.gd" type="Script" id=1]
 [ext_resource path="res://Camera.gd" type="Script" id=2]
+[ext_resource path="res://tiles/font/Gameplay.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://tiles/chaussure.png" type="Texture" id=4]
+[ext_resource path="res://tiles/health.png" type="Texture" id=5]
+[ext_resource path="res://tiles/layers.png" type="Texture" id=6]
+
+[sub_resource type="DynamicFont" id=1]
+size = 30
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 30
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 30
+font_data = ExtResource( 3 )
 
 [node name="ControlGame" type="Control"]
 anchor_right = 1.0
@@ -18,6 +34,53 @@ transform = Transform( 1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, -5,
 script = ExtResource( 2 )
 
 [node name="InfoScreen" type="Node2D" parent="Spatial"]
+
+[node name="chauss_sp" type="Sprite" parent="Spatial/InfoScreen"]
+position = Vector2( 75, 500 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 4 )
+
+[node name="nb_chauss" type="Label" parent="Spatial/InfoScreen"]
+margin_left = 150.0
+margin_top = 480.0
+margin_right = 173.0
+margin_bottom = 516.0
+custom_fonts/font = SubResource( 1 )
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="health_sp" type="Sprite" parent="Spatial/InfoScreen"]
+position = Vector2( 900, 500 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 5 )
+
+[node name="health" type="Label" parent="Spatial/InfoScreen"]
+margin_left = 950.0
+margin_top = 480.0
+margin_right = 996.0
+margin_bottom = 516.0
+custom_fonts/font = SubResource( 2 )
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="etage_sp" type="Sprite" parent="Spatial/InfoScreen"]
+position = Vector2( 900, 100 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 6 )
+
+[node name="etage" type="Label" parent="Spatial/InfoScreen"]
+margin_left = 950.0
+margin_top = 80.0
+margin_right = 990.0
+margin_bottom = 94.0
+custom_fonts/font = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ButtonMenu" type="Button" parent="."]
 margin_right = 12.0

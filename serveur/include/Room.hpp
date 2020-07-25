@@ -34,7 +34,7 @@ class Room
         const bool hasShoe() const;
 
         /* Methodes */
-        const int activate(Joueur& j);
+        virtual const int activate(Joueur& j);
         void receiveShoe();
         void giveShoe();
         void openDoor(int dir);

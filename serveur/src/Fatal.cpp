@@ -15,7 +15,8 @@ Fatal& Fatal::operator=(const Fatal& f){
 }
 
 const int Fatal::activate(Joueur& j){
-
+    cout << "c'est un Fatal" << endl;
+    
     // on ferme les portes vitrées de la salle
     for (int i = 0 ; i<4 ; i++){
         closeVitre(i);

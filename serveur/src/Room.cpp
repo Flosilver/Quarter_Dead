@@ -50,6 +50,7 @@ const bool Room::hasShoe() const{
 
 /* Methode called when a Joueur visite a Room*/
 const int Room::activate(Joueur& j){
+    cout << "c'est une room simple" << endl;
     visited = true;
     return 0;   // il ne se passe rien
 }

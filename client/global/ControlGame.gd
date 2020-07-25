@@ -284,6 +284,15 @@ func _networkMessage(mess):
 					t.y = 2
 					t.z -= lOffsetExplo[who][1]
 					cam.setTarget(t)
+		
+		'i':	# reception d'infos
+			var mess_array = mess.rsplit(" ",true)
+			#0: i,	1: dir,	2: etage,	3: hp,	4: nbChauss
+			if int(mess_array[1]) == global.direction:
+				$Spatial/InfoScreen/etage.set_text(mess_array[2])
+				$Spatial/InfoScreen/health.set_text(mess_array[3])
+				$Spatial/InfoScreen/nb_chauss.set_text(mess_array[4])
+				global.level = int(mess_array[2])
 
 func createRoom(x,y,room_num):
 	# Create a new tile instance

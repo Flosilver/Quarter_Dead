@@ -37,6 +37,8 @@ const int& Trap::getElement() const{
 const int Trap::activate(Joueur& j){
     int haz = 100;
 
+    cout << "c'est un trap" << endl;
+
     // on ferme les portes vitrées de la salle
     for (int i = 0 ; i<4 ; i++){
         closeVitre(i);

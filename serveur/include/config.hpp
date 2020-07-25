@@ -25,6 +25,7 @@ enum role_t{Acrobate, Cordonnier, Devin, Healer, Homme_chat, Homme_chat2, Robot,
 enum room_t{ROOM, TRAP, FATAL, DEVIN, TREASURE, GOAL};
 #define NB_ROOMS 6
 enum element_t{None, Fire, Water, Thunder, Wind};
+#define NB_ELEMENT 5
 
 typedef shared_ptr<Room> sp_Room;
 typedef vector<sp_Room> vsp_Room;
@@ -33,8 +34,6 @@ typedef vector<vsp_Room> map_t;
 #define HP_S 10
 #define HP_M 20
 #define HP_L 30
-
-#define NB_ELEMENT 5
 
 #define MAP_SIZE 5
 #define NB_ETAGES 1
