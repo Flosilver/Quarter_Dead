@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Bobine.obj-fceec9492caf6fcf0ea214ecd5aae003.mesh"
+
+[deps]
+
+files=[ "res://.import/Bobine.obj-fceec9492caf6fcf0ea214ecd5aae003.mesh" ]
+
+source_file="res://obj/Bobine.obj"
+dest_files=[ "res://.import/Bobine.obj-fceec9492caf6fcf0ea214ecd5aae003.mesh", "res://.import/Bobine.obj-fceec9492caf6fcf0ea214ecd5aae003.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

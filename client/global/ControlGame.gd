@@ -17,7 +17,12 @@ var explorerColor=[Color(255,0,0),Color(0,255,0),Color(0,0,255),Color(255,255,0)
 #	#05
 #	"res://obj/", 
 #]
-var objRoom = "res://obj/Piece.obj"
+var objRooms = [
+	#00
+	"res://obj/Piece.obj",
+	#01
+	"res://obj/Sortie.obj",
+	]
 # chemins vers les textures associées aux rooms
 var tileRooms=[
 	 #00
@@ -305,7 +310,7 @@ func createRoom(x,y,room_num):
 	# and translate it to its final position
 	mi.set_translation(Vector3(y,0,x))
 	# load the room mesh
-	var meshObj=load(objRoom)#objRooms[room_num])
+	var meshObj=load(objRooms[room_num])#objRooms[room_num])
 	# and assign the mesh instance with it
 	mi.mesh=meshObj
 	# create a new spatial material for the tile
