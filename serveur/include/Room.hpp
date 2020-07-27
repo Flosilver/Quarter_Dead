@@ -12,7 +12,7 @@ class Room
         int type;
         bool visited = false;
         bool portes[4] = {false, false, false, false};
-        bool vitres[4] = {true, true, true, true};
+        bool vitres = true;
 
         int nbChauss = 0;
 
@@ -21,7 +21,7 @@ class Room
     public:
         Room();
         Room(const Room& r);
-        ~Room();
+        virtual ~Room();
 
         /* Opérators */
         Room& operator=(const Room& r);
@@ -30,7 +30,7 @@ class Room
         const int& getType() const;
         const bool& isVisited() const;
         const bool isDoorOpen(int dir) const;
-        const bool isVitreOpen(int dir) const;
+        const bool isVitreOpen() const;
         const bool hasShoe() const;
 
         /* Methodes */
@@ -38,8 +38,8 @@ class Room
         void receiveShoe();
         void giveShoe();
         void openDoor(int dir);
-        void closeVitre(int dir);
-        void openVitre(int dir);
+        void closeVitre();
+        void openVitre();
 
 };
 

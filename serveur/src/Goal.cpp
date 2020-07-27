@@ -26,7 +26,6 @@ Goal& Goal::operator=(const Goal& g){
 }
 
 const int Goal::activate(Joueur& j){
-    cout << "c'est le goal" << endl;
     test_visited[j.getDir()] = true;
     return 2;   // le joueur a fini l'étage
 }

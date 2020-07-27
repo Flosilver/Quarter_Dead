@@ -37,11 +37,8 @@ const bool Room::isDoorOpen(int dir) const{
     return portes[dir];
 }
 
-const bool Room::isVitreOpen(int dir) const{
-    if (dir<0 || dir>3){
-        return false;
-    }
-    return portes[dir];
+const bool Room::isVitreOpen() const{
+    return vitres;
 }
 
 const bool Room::hasShoe() const{
@@ -50,7 +47,6 @@ const bool Room::hasShoe() const{
 
 /* Methode called when a Joueur visite a Room*/
 const int Room::activate(Joueur& j){
-    cout << "c'est une room simple" << endl;
     visited = true;
     return 0;   // il ne se passe rien
 }
@@ -77,20 +73,10 @@ void Room::openDoor(int dir){
     }
 }
 
-void Room::closeVitre(int dir){
-    if ( dir >= 0 && dir <= 3){
-        vitres[dir] = false;
-    }
-    else{
-        cerr << "***ERROR: Room::closeVitre(int dir) : wrong argument" << endl;
-    }
+void Room::closeVitre(){
+    vitres = false;
 }
 
-void Room::openVitre(int dir){
-    if ( dir >= 0 && dir <= 3){
-        vitres[dir] = true;
-    }
-    else{
-        cerr << "***ERROR: Room::openVitre(int dir) : wrong argument" << endl;
-    }
+void Room::openVitre(){
+    vitres = true;
 }

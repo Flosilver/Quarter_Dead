@@ -67,7 +67,7 @@ void Quarter_Dead::generateMaze(){
                     case room_t::TRAP :
                         haz = rand() % 101;
                         if ( haz <= (i+1) * SEUIL_TRAP){
-                            maze[i][j][k] = make_shared<Room>(Trap());
+                            maze[i][j][k] = make_shared<Trap>(Trap());
                         }
                         else{
                             maze[i][j][k] = make_shared<Room>(Room());
@@ -77,7 +77,7 @@ void Quarter_Dead::generateMaze(){
                     case room_t::FATAL :
                         haz = rand() % 101;
                         if ( haz <= (i+1) * SEUIL_FATAL ){
-                            maze[i][j][k] = make_shared<Room>(Fatal());
+                            maze[i][j][k] = make_shared<Fatal>(Fatal());
                         }
                         else{
                             maze[i][j][k] = make_shared<Room>(Room());
@@ -87,7 +87,7 @@ void Quarter_Dead::generateMaze(){
                     case room_t::GOAL :
                         haz = rand() % 101;
                         if ( haz <= SEUIL_GOAL ){
-                            maze[i][j][k] = make_shared<Room>(Goal());
+                            maze[i][j][k] = make_shared<Goal>(Goal());
                             vGoal = Vect2i(j,k);
                             goal = true;
                         }
@@ -207,7 +207,7 @@ void Quarter_Dead::handleIncomingMessage(){
                     cout << "Passage à l'état de GAME" << endl;
 
                     // Envoie des infos sur le jeux
-                    sprintf(mess, "m%d%d", NB_ETAGES, MAP_SIZE);
+                    sprintf(mess, "j%d%d", NB_ETAGES, MAP_SIZE);
                     sendBroadcast(mess);
 
                     // Génération de la map
@@ -321,7 +321,7 @@ void Quarter_Dead::handleIncomingMessage(){
                     //cout << "position de la salle visée: " << vtemp << endl;
 
                     //deplacement impossible = indices impossibles / porte visée fermée / porte vitrée de l'autre coté fermée
-                    if (temp < 0 || temp >= MAP_SIZE || !maze[etage][pos.x][pos.y]->isDoorOpen(vise) || !maze[etage][vtemp.x][vtemp.y]->isVitreOpen((vise+2)%4)){
+                    if (temp < 0 || temp >= MAP_SIZE || !maze[etage][pos.x][pos.y]->isDoorOpen(vise) || !maze[etage][vtemp.x][vtemp.y]->isVitreOpen()){
                         sprintf(mess, "en");
                         sendBroadcast(mess);
                     }
@@ -347,7 +347,7 @@ void Quarter_Dead::handleIncomingMessage(){
                             cout << "c'est un piège" << endl;
                             
                             // on indique au client de fermer les portes vitrées
-                            sprintf(mess, "t%d%d%d", etage, pos.x, pos.y);
+                            sprintf(mess, "v%d%d%d", etage, pos.x, pos.y);
                             sendBroadcast(mess);
 
                             // Fatal + en vie -> resurection de l'Homme chat
@@ -362,6 +362,9 @@ void Quarter_Dead::handleIncomingMessage(){
                             }
                             // si le joueur a survécu au piège on update ses infos
                             else if ( players[dir]->isAlive() ){
+                                // information sur l'élément du Trap pour adapter l'animation
+                                sprintf(mess, "t%d%d", pos.x, pos.y);
+
                                 // update des infos
                                 write_Info_Update_Mess(mess, dir);
                                 sendBroadcast(mess);
@@ -390,7 +393,7 @@ void Quarter_Dead::handleIncomingMessage(){
                                 players[dir]->climb();
 
                                 // message indiquant le changement d'étage d'un joueur
-                                sprintf(mess, "g%d", dir);
+                                sprintf(mess, "a%d", dir);
                                 sendBroadcast(mess);
                             }
                             break;

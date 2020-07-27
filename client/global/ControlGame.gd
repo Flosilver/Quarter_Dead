@@ -3,34 +3,35 @@ extends Control
 var explorerColor=[Color(255,0,0),Color(0,255,0),Color(0,0,255),Color(255,255,0)]
 # chemins vers les différents des objets rooms
 
-var objRooms=[
-	#00
-	"res://obj/Piece.obj",
-	#01
-	"res://obj/", 
-	#02
-	"res://obj/", 
-	#03
-	"res://obj/", 
-	#04
-	"res://obj/", 
-	#05
-	"res://obj/", 
-]
+#var objRooms=[
+#	#00
+#	"res://obj/Piece.obj",
+#	#01
+#	"res://obj/", 
+#	#02
+#	"res://obj/", 
+#	#03
+#	"res://obj/", 
+#	#04
+#	"res://obj/", 
+#	#05
+#	"res://obj/", 
+#]
+var objRoom = "res://obj/Piece.obj"
 # chemins vers les textures associées aux rooms
 var tileRooms=[
 	 #00
 	"res://tiles/Texture/texturePiece.png",
 	#01
-	"res://tiles/Texture/", 
-	#02
-	"res://tiles/Texture/", 
-	#03
-	"res://tiles/Texture/", 
-	#04
-	"res://tiles/Texture/", 
-	#05
-	"res://tiles/Texture/", 
+	"res://tiles/Texture/textureGoal.png", 
+#	#02
+#	"res://tiles/Texture/", 
+#	#03
+#	"res://tiles/Texture/", 
+#	#04
+#	"res://tiles/Texture/", 
+#	#05
+#	"res://tiles/Texture/", 
 ]
 # textures des rooms
 var txRooms=[
@@ -38,14 +39,14 @@ var txRooms=[
 	null,
 	#01
 	null, 
-	#02
-	null, 
-	#03
-	null, 
-	#04
-	null, 
-	#05
-	null, 
+#	#02
+#	null, 
+#	#03
+#	null, 
+#	#04
+#	null, 
+#	#05
+#	null, 
 ]
 var objDoors=[
 	#00
@@ -193,7 +194,7 @@ func _networkMessage(mess):
 #				var myself=root.get_child(1)
 #				print ("info ",root,myself)
 
-		'm':	# récupère les variable des dimensions du jeu
+		'j':	# récupère les variable des dimensions du jeu
 			global.nb_etages = int(mess[1])
 			global.map_size = int(mess[2])
 			maze = []
@@ -295,13 +296,16 @@ func _networkMessage(mess):
 				global.level = int(mess_array[2])
 
 func createRoom(x,y,room_num):
-	# Create a new tile instance
-	room_num = 0
+	# Create a new room instance
+	if room_num == 5:
+		room_num = 1
+	else:
+		room_num = 0
 	var mi=MeshInstance.new()
 	# and translate it to its final position
-	mi.set_translation(Vector3(x,0,y))
+	mi.set_translation(Vector3(y,0,x))
 	# load the room mesh
-	var meshObj=load(objRooms[room_num])
+	var meshObj=load(objRoom)#objRooms[room_num])
 	# and assign the mesh instance with it
 	mi.mesh=meshObj
 	# create a new spatial material for the tile
@@ -424,7 +428,7 @@ func getPlayerY(player):
 
 func openDoor( etage, roomX, roomY, door):
 	print("x: ", roomX, " y: ", roomY)
-	var room = maze[etage][roomY][roomX];
+	var room = maze[etage][roomX][roomY];
 	var lDoor = room.get_child(4*door)
 	var rDoor = room.get_child(4*door+1)
 	var transL = lDoor.translation

@@ -12,7 +12,7 @@ void kb_event(int* in){
 }
 
 int main (){
-    srand(time(0));
+    //srand(time(0));
     cout << "\n\n\n____________________________________________________________________________________" << endl;
 
     rsc::Game::initialize_server();
@@ -23,43 +23,6 @@ int main (){
 
     thread kbe(kb_event, &input);
     kbe.detach();
-
-    /* tests */
-    /*cout << "---game created" << endl;
-    game.generateMaze();
-    cout << "---map generated" << endl;
-    for (int i=0 ; i<NB_ETAGES ; i++){
-        game.getEtage(i).print();
-    }
-    cout << "---printed" << endl;
-
-    int* listRooms[NB_ELEMENT];
-    for (int i=0 ; i<NB_ETAGES ; i++){
-        listRooms[i] = game.getEtage(i).getRoomList();
-    }
-    for (int i=0 ; i<NB_ETAGES ; i++){
-        for (int j = 0 ; j < MAP_SIZE*MAP_SIZE ; j++){
-            cout << listRooms[i][j];
-        }
-        cout << endl;
-    }
-
-    for (int i=0 ; i<NB_ETAGES ; i++){
-        delete[] listRooms[i];
-    }
-
-    cout << endl;
-    string mess1 = game.mapMess(0);
-    cout << mess1 << endl;
-
-    char mess[256];
-    sprintf(mess, "g%d%s", 1, game.mapMess(1).c_str());
-    cout << mess << endl;
-
-    sp_Joueur spj = game.getPlayer(1);
-    cout << spj->getDir() << " " << spj->getRole() << endl;
-    spj->giveRole(3);
-    cout << spj->getRole() << endl;*/
 
     /* suite du vrai main */
     while (input!='q' && input!='Q')
@@ -84,9 +47,7 @@ int main (){
                 
             }
         }
-        // TODO: méthode pour quitter proprement la boucle
     }
-    //atexit (enet_deinitialize);
 
     return 0;
 }

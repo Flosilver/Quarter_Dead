@@ -1,8 +1,9 @@
 #include "Trap.hpp"
 
 Trap::Trap(): Room(room_t::TRAP){
-    dmg = 5 + rand() % 7;
+    dmg = 5 + rand()%7;
     element = rand() % NB_ELEMENT;
+    cout << "dmg: " << dmg << "\telement: " << element << endl;
 }
 
 Trap::Trap(int d): Room(room_t::TRAP){
@@ -37,12 +38,10 @@ const int& Trap::getElement() const{
 const int Trap::activate(Joueur& j){
     int haz = 100;
 
-    cout << "c'est un trap" << endl;
+    cout << "degats: " << dmg << endl;
 
     // on ferme les portes vitrées de la salle
-    for (int i = 0 ; i<4 ; i++){
-        closeVitre(i);
-    }
+    closeVitre();
 
     switch (j.getRole())
     {
