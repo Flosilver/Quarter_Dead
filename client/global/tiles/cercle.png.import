@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/textureBobine1.0.png-bf86592432d62518abe348c110452f70.s3tc.stex"
-path.etc2="res://.import/textureBobine1.0.png-bf86592432d62518abe348c110452f70.etc2.stex"
+path.s3tc="res://.import/cercle.png-fe66a05f899a2eeb0fc49061f0739023.s3tc.stex"
+path.etc2="res://.import/cercle.png-fe66a05f899a2eeb0fc49061f0739023.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://tiles/Texture/textureBobine1.0.png"
-dest_files=[ "res://.import/textureBobine1.0.png-bf86592432d62518abe348c110452f70.s3tc.stex", "res://.import/textureBobine1.0.png-bf86592432d62518abe348c110452f70.etc2.stex" ]
+source_file="res://tiles/cercle.png"
+dest_files=[ "res://.import/cercle.png-fe66a05f899a2eeb0fc49061f0739023.s3tc.stex", "res://.import/cercle.png-fe66a05f899a2eeb0fc49061f0739023.etc2.stex" ]
 
 [params]
 

@@ -299,6 +299,15 @@ func _networkMessage(mess):
 				$Spatial/InfoScreen/health.set_text(mess_array[3])
 				$Spatial/InfoScreen/nb_chauss.set_text(mess_array[4])
 				global.level = int(mess_array[2])
+		
+		'v':	# demande de fermer ou ouvrir les vitres
+			if mess[1] == 'c':
+				print("fermeture des vitres")
+				CloseGlass(int(mess[2]), int(mess[3]), int(mess[4]))
+			
+			if mess[1] == 'o':
+				print("ouverture des vitres")
+				OpenGlass(int(mess[2]), int(mess[3]), int(mess[4]))
 
 func createRoom(x,y,room_num):
 	# Create a new room instance
@@ -368,9 +377,13 @@ func createRoom(x,y,room_num):
 			# load du modèle
 			portes[j].mesh = load(objDoors[j])
 			#instanciation de la texture
-			tx_portes[j] = SpatialMaterial.new()
+			if j == 3:
+				tx_portes[j] = load("res://tiles/Material/Vitre.material")
+			else:
+				tx_portes[j] = SpatialMaterial.new()
 			# assignation de la texture
 			portes[j].set_surface_material(0,tx_portes[j])
+#			portes[j].material = load("res://tiles/Material/Vitre.material")
 			# chargement de la texture
 			if txDoors[j] == null:
 				txDoors[j] = ImageTexture.new()
@@ -432,7 +445,7 @@ func getPlayerY(player):
 	return y
 
 func openDoor( etage, roomX, roomY, door):
-	print("x: ", roomX, " y: ", roomY)
+#	print("x: ", roomX, " y: ", roomY)
 	var room = maze[etage][roomX][roomY];
 	var lDoor = room.get_child(4*door)
 	var rDoor = room.get_child(4*door+1)
@@ -440,33 +453,33 @@ func openDoor( etage, roomX, roomY, door):
 	var transR = rDoor.translation
 	match door:
 		0:
-			print("porte 0")
+#			print("porte 0")
 			if (!door_dir.has_all([lDoor,rDoor])):
-				print("les portes étaient fermées")
+#				print("les portes étaient fermées")
 				door_dir[lDoor] = Vector3(transL.x-1,transL.y,transL.z)
 				door_dir[rDoor] = Vector3(transR.x+1,transR.y,transR.z)
-				print("ouverture")
+#				print("ouverture")
 		1:
-			print("porte 1")
+#			print("porte 1")
 			if (!door_dir.has_all([lDoor,rDoor])):
-				print("les portes étaient fermées")
+#				print("les portes étaient fermées")
 				door_dir[lDoor] = Vector3(transL.x,transL.y,transL.z-1)
 				door_dir[rDoor] = Vector3(transR.x,transR.y,transR.z+1)
-				print("ouverture")
+#				print("ouverture")
 		2:
-			print("porte 2")
+#			print("porte 2")
 			if (!door_dir.has_all([lDoor,rDoor])):
-				print("les portes étaient fermées")
+#				print("les portes étaient fermées")
 				door_dir[lDoor] = Vector3(transL.x+1,transL.y,transL.z)
 				door_dir[rDoor] = Vector3(transR.x-1,transR.y,transR.z)
-				print("ouverture")
+#				print("ouverture")
 		3:
-			print("porte 3")
+#			print("porte 3")
 			if (!door_dir.has_all([lDoor,rDoor])):
-				print("les portes étaient fermées")
+#				print("les portes étaient fermées")
 				door_dir[lDoor] = Vector3(transL.x,transL.y,transL.z+1)
 				door_dir[rDoor] = Vector3(transR.x,transR.y,transR.z-1)
-				print("ouverture")
+#				print("ouverture")
 
 func anim_doors():
 	if door_dir.size() != 0:
@@ -489,10 +502,30 @@ func anim_doors():
 					mesh.translation.z = pos.z + abs(target.z-pos.z)/(target.z-pos.z) * 0.02
 #					pos.z += abs(target.z-pos.z)/(target.z-pos.z) * 0.05
 
+func CloseGlass(etage, glassX, glassY):
+	var room = maze[etage][glassX][glassY];
+	var glass
+	var vitre
+	for i in range(4):
+		glass = room.get_child(i*4+2)
+		vitre = room.get_child(i*4+3)
+		glass.translation.y = 0
+		vitre.translation.y = 0
+
+func OpenGlass(etage, glassX, glassY):
+	var room = maze[etage][glassX][glassY];
+	var glass
+	var vitre
+	for i in range(4):
+		glass = room.get_child(i*4+2)
+		vitre = room.get_child(i*4+3)
+		glass.translation.y = 2
+		vitre.translation.y = 2
+
 func _on_ButtonMenu_pressed():
 	var root=get_tree().get_root()
 	var myself=root.get_child(1)
-	print (root,myself)
+#	print (root,myself)
 	root.remove_child(myself)
 	root.add_child(global.controlMenuNode)
 
@@ -501,12 +534,12 @@ func _on_ButtonC1_pressed():
 	var pp = global.playersPresent
 	if !(pp[0] + pp[1] + pp[2] + pp[3] == 4):
 		var connectMessage="C1"
-		print("bouton c1 pressé")
+#		print("bouton c1 pressé")
 		global.mplayer.send_bytes(connectMessage.to_ascii())
 		var i = 1
 		if global.playersPresent[i] == 0:
 			global.playersPresent[i] = 1
-			print("création d'un nouveau explorateur")
+#			print("création d'un nouveau explorateur")
 			lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
 
 
@@ -514,12 +547,12 @@ func _on_ButtonC2_pressed():
 	var pp = global.playersPresent
 	if !(pp[0] + pp[1] + pp[2] + pp[3] == 4):
 		var connectMessage="C2"
-		print("bouton c2 pressé")
+#		print("bouton c2 pressé")
 		global.mplayer.send_bytes(connectMessage.to_ascii())
 		var i = 2
 		if global.playersPresent[i] == 0:
 			global.playersPresent[i] = 1
-			print("création d'un nouveau explorateur")
+#			print("création d'un nouveau explorateur")
 			lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)
 
 
@@ -527,10 +560,10 @@ func _on_ButtonC3_pressed():
 	var pp = global.playersPresent
 	if !(pp[0] + pp[1] + pp[2] + pp[3] == 4):
 		var connectMessage="C3"
-		print("bouton c3 pressé")
+#		print("bouton c3 pressé")
 		global.mplayer.send_bytes(connectMessage.to_ascii())
 		var i = 3
 		if global.playersPresent[i] == 0:
 			global.playersPresent[i] = 1
-			print("création d'un nouveau explorateur")
+#			print("création d'un nouveau explorateur")
 			lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1], i, 8)

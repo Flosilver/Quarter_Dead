@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/textureBobine1.0.png-bf86592432d62518abe348c110452f70.s3tc.stex"
-path.etc2="res://.import/textureBobine1.0.png-bf86592432d62518abe348c110452f70.etc2.stex"
+path.s3tc="res://.import/thunder2.png-d3239ed4b57e71e1900e9db067ffb0c3.s3tc.stex"
+path.etc2="res://.import/thunder2.png-d3239ed4b57e71e1900e9db067ffb0c3.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://tiles/Texture/textureBobine1.0.png"
-dest_files=[ "res://.import/textureBobine1.0.png-bf86592432d62518abe348c110452f70.s3tc.stex", "res://.import/textureBobine1.0.png-bf86592432d62518abe348c110452f70.etc2.stex" ]
+source_file="res://tiles/thunder2.png"
+dest_files=[ "res://.import/thunder2.png-d3239ed4b57e71e1900e9db067ffb0c3.s3tc.stex", "res://.import/thunder2.png-d3239ed4b57e71e1900e9db067ffb0c3.etc2.stex" ]
 
 [params]
 

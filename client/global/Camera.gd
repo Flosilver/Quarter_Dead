@@ -22,7 +22,7 @@ var mouvT = 0
 func _ready():
 	nodeIS=get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("InfoScreen")
 	
-	print ("InfoScreen",nodeIS)
+#	print ("InfoScreen",nodeIS)
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -347,7 +347,7 @@ void Quarter_Dead::handleIncomingMessage(){
                             cout << "c'est un piège" << endl;
                             
                             // on indique au client de fermer les portes vitrées
-                            sprintf(mess, "v%d%d%d", etage, pos.x, pos.y);
+                            sprintf(mess, "vc%d%d%d", etage, pos.x, pos.y);
                             sendBroadcast(mess);
 
                             // Fatal + en vie -> resurection de l'Homme chat
@@ -364,6 +364,7 @@ void Quarter_Dead::handleIncomingMessage(){
                             else if ( players[dir]->isAlive() ){
                                 // information sur l'élément du Trap pour adapter l'animation
                                 sprintf(mess, "t%d%d", pos.x, pos.y);
+                                sendBroadcast(mess);
 
                                 // update des infos
                                 write_Info_Update_Mess(mess, dir);
@@ -387,6 +388,9 @@ void Quarter_Dead::handleIncomingMessage(){
                                 // message de victoire
                                 sprintf(mess, "w%d", dir);
                                 sendBroadcast(mess);
+
+                                // Changement d'état
+                                //setState(state_t::END);
                             }
                             // sinon, le joueur monte d'un niveau
                             else{
