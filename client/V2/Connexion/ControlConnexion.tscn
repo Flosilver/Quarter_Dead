@@ -1,0 +1,97 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Connexion/ControlConnexion.gd" type="Script" id=1]
+[ext_resource path="res://FadeIn.tscn" type="PackedScene" id=2]
+
+[sub_resource type="SpatialMaterial" id=1]
+vertex_color_use_as_albedo = true
+albedo_color = Color( 0, 0, 0.258824, 1 )
+
+[sub_resource type="QuadMesh" id=2]
+material = SubResource( 1 )
+size = Vector2( 5, 4 )
+
+[sub_resource type="SpatialMaterial" id=3]
+vertex_color_use_as_albedo = true
+albedo_color = Color( 0, 0, 0.258824, 1 )
+
+[sub_resource type="QuadMesh" id=4]
+material = SubResource( 3 )
+size = Vector2( 5, 3 )
+
+[sub_resource type="SpatialMaterial" id=5]
+vertex_color_use_as_albedo = true
+albedo_color = Color( 0, 0, 0.258824, 1 )
+
+[sub_resource type="QuadMesh" id=6]
+material = SubResource( 5 )
+size = Vector2( 4, 3 )
+
+[sub_resource type="SpatialMaterial" id=7]
+vertex_color_use_as_albedo = true
+albedo_color = Color( 0, 0, 0.258824, 1 )
+
+[sub_resource type="QuadMesh" id=8]
+material = SubResource( 7 )
+size = Vector2( 4, 3 )
+
+[sub_resource type="SpatialMaterial" id=9]
+vertex_color_use_as_albedo = true
+albedo_color = Color( 0, 0, 0.258824, 1 )
+
+[sub_resource type="QuadMesh" id=10]
+material = SubResource( 9 )
+size = Vector2( 5, 4 )
+
+[node name="ControlConnexion" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Scene" type="Spatial" parent="."]
+
+[node name="Camera" type="Camera" parent="Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1, 3 )
+
+[node name="OmniLight" type="OmniLight" parent="Scene/Camera"]
+
+[node name="floor" type="MeshInstance" parent="Scene"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 1.5, 0, 1 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="back_wall" type="MeshInstance" parent="Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.5, -1 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="left_wall" type="MeshInstance" parent="Scene"]
+transform = Transform( -1.62921e-07, 0, 1, 0, 1, 0, -1, 0, -1.62921e-07, -1, 1.5, 1 )
+mesh = SubResource( 6 )
+material/0 = null
+
+[node name="right_wall" type="MeshInstance" parent="Scene"]
+transform = Transform( -1.62921e-07, 0, -1, 0, 1, 0, 1, 0, -1.62921e-07, 4, 1.5, 1 )
+mesh = SubResource( 8 )
+material/0 = null
+
+[node name="ceiling" type="MeshInstance" parent="Scene"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 1.5, 3, 1 )
+mesh = SubResource( 10 )
+material/0 = null
+
+[node name="MenuPrincipalButton" type="Button" parent="."]
+margin_right = 12.0
+margin_bottom = 20.0
+text = "Menu Principal"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FadeIn" parent="." instance=ExtResource( 2 )]
+visible = false
+[connection signal="pressed" from="MenuPrincipalButton" to="." method="_on_MenuPrincipalButton_pressed"]
+[connection signal="fade_finished" from="FadeIn" to="." method="_on_FadeIn_fade_finished"]

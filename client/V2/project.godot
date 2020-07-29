@@ -22,7 +22,4 @@ config/icon="res://icon.png"
 [autoload]
 
 global="*res://global.gd"
-
-[rendering]
-
-environment/default_clear_color=Color( 0.172549, 0.309804, 0.6, 1 )
+network="*res://network.gd"
