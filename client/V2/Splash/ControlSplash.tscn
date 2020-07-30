@@ -72,7 +72,7 @@ custom_constants/shadow_offset_x = 0
 custom_constants/shadow_offset_y = 2
 text = "
 
-version: beta 1.1
+version: beta 2.0
 By: F. BEROUJON - Y. POULIQUEN"
 
 [node name="FadeIn" parent="." instance=ExtResource( 5 )]

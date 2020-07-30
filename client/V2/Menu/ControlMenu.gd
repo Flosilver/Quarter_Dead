@@ -36,6 +36,8 @@ func _on_NewGameButton_pressed():
 	next_scene = global.controlConnexionNode
 	$FadeIn.show()
 	$FadeIn.fade_in()
+	var connectMessage="C"+str(global.direction)
+	global.mplayer.send_bytes(connectMessage.to_ascii())
 
 
 func _on_TestReseauButton_pressed():

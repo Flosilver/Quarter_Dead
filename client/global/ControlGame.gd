@@ -176,7 +176,6 @@ func _ready():
 	campy=-5
 	var i = global.direction
 	lExplos[i]=createExplorer(campx+lOffsetExplo[i][0], campy+lOffsetExplo[i][1],i,8)
-	pass # Replace with function body.
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

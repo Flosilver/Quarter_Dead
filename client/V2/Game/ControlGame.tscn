@@ -1,8 +1,38 @@
-[gd_scene format=2]
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Game/ControlGame.gd" type="Script" id=1]
+[ext_resource path="res://Game/Camera.gd" type="Script" id=2]
+[ext_resource path="res://Game/Info/Etage.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Game/Info/Chaussure.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Game/Info/Health.tscn" type="PackedScene" id=5]
 
 [node name="ControlGame" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Cam" type="Spatial" parent="."]
+
+[node name="Camera" type="Camera" parent="Cam"]
+transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0, -1 )
+script = ExtResource( 2 )
+
+[node name="OmniLight" type="OmniLight" parent="Cam/Camera"]
+
+[node name="InfoScreen" type="Node2D" parent="Cam"]
+
+[node name="Health" parent="Cam/InfoScreen" instance=ExtResource( 5 )]
+position = Vector2( 300, 550 )
+
+[node name="Chaussure" parent="Cam/InfoScreen" instance=ExtResource( 4 )]
+position = Vector2( 500, 550 )
+
+[node name="Etage" parent="Cam/InfoScreen" instance=ExtResource( 3 )]
+position = Vector2( 700, 550 )
+
+[node name="Players" type="Spatial" parent="."]
+
+[node name="Maze" type="Spatial" parent="."]

@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Connexion/ControlConnexion.gd" type="Script" id=1]
 [ext_resource path="res://FadeIn.tscn" type="PackedScene" id=2]
+[ext_resource path="res://font/gameovercre1_16.tres" type="DynamicFont" id=3]
 
 [sub_resource type="SpatialMaterial" id=1]
 vertex_color_use_as_albedo = true
@@ -91,7 +92,46 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="ButtonC1" type="Button" parent="."]
+margin_left = 450.0
+margin_top = 20.0
+margin_right = 479.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 32, 32 )
+custom_fonts/font = ExtResource( 3 )
+text = "J2"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonC2" type="Button" parent="."]
+margin_left = 500.0
+margin_top = 20.0
+margin_right = 532.0
+margin_bottom = 52.0
+rect_min_size = Vector2( 32, 32 )
+custom_fonts/font = ExtResource( 3 )
+text = "J3"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonC3" type="Button" parent="."]
+margin_left = 550.0
+margin_top = 20.0
+margin_right = 582.0
+margin_bottom = 52.0
+rect_min_size = Vector2( 32, 32 )
+custom_fonts/font = ExtResource( 3 )
+text = "J4"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="FadeIn" parent="." instance=ExtResource( 2 )]
 visible = false
 [connection signal="pressed" from="MenuPrincipalButton" to="." method="_on_MenuPrincipalButton_pressed"]
+[connection signal="pressed" from="ButtonC1" to="." method="_on_ButtonC1_pressed"]
+[connection signal="pressed" from="ButtonC2" to="." method="_on_ButtonC2_pressed"]
+[connection signal="pressed" from="ButtonC3" to="." method="_on_ButtonC3_pressed"]
 [connection signal="fade_finished" from="FadeIn" to="." method="_on_FadeIn_fade_finished"]

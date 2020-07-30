@@ -1,0 +1,248 @@
+extends Control
+
+var connexion_node = global.controlConnexionNode
+
+var objExplo=[
+	#00
+	"res://obj/Personnage.obj",
+	#01
+	"res://obj/Personnage.obj", 
+	#02
+	"res://obj/Personnage.obj", 
+	#03
+	"res://obj/Personnage.obj", 
+	#04
+	"res://obj/PersonnageHommeChat.obj", 
+	#05
+	"res://obj/PersonnageHommeChat.obj",
+	#06
+	"res://obj/Robot.obj",
+	#07
+	"res://obj/Personnage.obj",
+	#08 : obj du modèle temporaire pour la connexion
+	"res://obj/Personnage.obj"
+]
+var tileExplo=[
+	#00
+	"res://tiles/Game/Texture/texturePersonnageAcrobate.png",
+	#01
+	"res://tiles/Game/Texture/texturePersonnageCordonier.png", 
+	#02
+	"res://tiles/Game/Texture/texturePersonnage.png", 
+	#03
+	"res://tiles/Game/Texture/texturePersonnageMedecin.png", 
+	#04
+	"res://tiles/Game/Texture/texturePersonnageHommeChat.png", 
+	#05
+	"res://tiles/Game/Texture/texturePersonnageHommeChat.png",
+	#06
+	"res://tiles/Game/Texture/textureRobot.png",
+	#07
+	"res://tiles/Game/Texture/texturePersonnageTank.png",
+	#08 : chemin de la texture pour le modèle temporaire
+	"res://tiles/Game/Texture/texturePersonnage.png"
+]
+var txExplo=[
+	#00
+	null,
+	#01
+	null, 
+	#02
+	null, 
+	#03
+	null, 
+	#04
+	null, 
+	#05
+	null,
+	#06
+	null,
+	#07
+	null,
+	#08 : texture du modèle temporaire
+	null
+]
+
+var lOffsetExplo=[
+	[-0.5,0.5],
+	[0.5,0.5],
+	[0.5,-0.5],
+	[-0.5,-0.5],
+]
+
+# liste contenant les pointeurs vers les 4 mesh des joueurs
+var lExplos=[null,null,null,null]
+
+#var campx
+#var campy
+var pressed=[0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	]
+
+var maze
+const roomOff = 7
+var door_dir = {}
+var lTargets = [null,null,null,null]
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+func _networkMessage(mess):
+	print ("_networkMessage=",mess)
+	var dir
+	match (global.etat):
+		0:	# CONNEXION des joueurs
+			match (mess[0]):
+				'c':	# connexion des joueurs
+					var cnx
+					for i in range(global.NB_J):
+						cnx = int(mess[i+1])
+						if global.playersPresent[i]==0 and cnx==1:
+							global.playersPresent[i]=1
+							connexion_node.add_new_player(i)
+							# un nouveau joueur s'est connecté et il est créé dans la scnene de connexion et celle du jeu
+						if global.playersPresent[i]==1 and cnx==0:
+							global.playersPresent[i]=0
+							connexion_node.remove_new_player(i)
+							# un nouveau joueur s'est déconnecté et il est supprimé dans la scnene de connexion et celle du jeu
+				
+				'j':	# infos sur le jeux
+					global.nb_etages = int(mess[1])
+					global.map_size = int(mess[2])
+					maze = []
+					print("création de la map")
+					for i in range(global.nb_etages):
+						print("création de l'étage ", i)
+						maze.push_back([])
+						for j in range(global.map_size):
+							maze[i].push_back([])
+							for _k in range(global.map_size):
+								maze[i][j].append(null)
+						print("étage ", i, " x=", maze[i].size(), " y=", maze[i][0].size())
+					print("nb_étages créés: ",maze.size())
+				
+				'g':	# generation d'un etage
+					var idr = 2
+					# étage a construire
+					var etage = int(mess[1])
+					for i in range(global.map_size):
+						for j in range(global.map_size):
+							maze[etage][i][j] = int(mess[idr])
+							#print(maze[etage][i][j])
+							idr += 1
+					if etage == global.level:
+						buildMaze(etage)
+					buildMaze(etage)
+				
+				'p':	# placement des pions
+					var y = int(mess[1])
+					var x = int(mess[2])
+		#			x = 0
+		#			y = 0
+					for i in range(global.NB_J):
+						lExplos[i].set_translation(Vector3((x*roomOff)+lOffsetExplo[i][0],0,(y*roomOff)+lOffsetExplo[i][1]))
+					$Cam.set_translation(Vector3(x*roomOff,1.6,(y*roomOff)))
+				
+				'r': # distribution des rôles
+					var xtemp
+					var ytemp
+					var ztemp
+					for i in range(global.NB_J):
+						xtemp = lExplos[i].translation.x
+						ytemp = lExplos[i].translation.y
+						ztemp = lExplos[i].translation.z
+						createExplorer(xtemp,ztemp,i,int(mess[i+1]))
+						lExplos[i].set_translation(Vector3(xtemp,ytemp,ztemp))
+					global.etat = 1
+					connexion_node.start_game()
+		1:	# etat de jeu
+			match mess[0]:
+				'o': # ouverture de porte
+					if ( mess[1] == 'y' ):
+						var who = int(mess[2])
+						var wich = int(mess[3])
+						maze[global.level][getPlayerX(who)][getPlayerY(who)].open_door(wich)
+						match wich:
+							0:
+								maze[global.level][getPlayerX(who)-1][getPlayerY(who)].open_door((wich+2)%4)
+							1:
+								maze[global.level][getPlayerX(who)][getPlayerY(who)+1].open_door((wich+2)%4)
+							2:
+								maze[global.level][getPlayerX(who)+1][getPlayerY(who)].open_door((wich+2)%4)
+							3:
+								maze[global.level][getPlayerX(who)][getPlayerY(who)-1].open_door((wich+2)%4)
+				
+				'i':	# reception d'infos
+					var mess_array = mess.rsplit(" ",true)
+					#0: i,	1: dir,	2: etage,	3: hp,	4: nbChauss
+					if int(mess_array[1]) == global.direction:
+						$Cam/InfoScreen/Etage.set_text(mess_array[2])
+						$Cam/InfoScreen/Health.set_text(mess_array[3])
+						$Cam/InfoScreen/Chaussure.set_text(mess_array[4])
+						global.level = int(mess_array[2])
+
+func add_player(num):
+	print("ajout ingame du joueur: ", num)
+	var mi = MeshInstance.new()
+	$Players.add_child(mi)
+	lExplos[num] = mi
+
+func remove_player(num):
+	if lExplos[num] != null:
+		$Players.remove_child(lExplos[num])
+		lExplos[num] = null;
+
+func createExplorer(x,y,who,role):
+	# Create a new tile instance
+	var mi=lExplos[who]
+	# and translate it to its final position
+	mi.set_translation(Vector3(x,0,y))
+	mi.set_rotation(Vector3(0,0,0))
+	# load the tile mesh
+	var meshObj=load(objExplo[role])
+	# and assign the mesh instance with it
+	mi.mesh=meshObj
+	# create a new spatial material for the tile
+	var spatial_material=SpatialMaterial.new()
+	# set its color
+	# surface_material.albedo_color=explorerColor[num]
+	# and assign the material to the mesh instance
+	mi.set_surface_material(0,spatial_material)
+	if txExplo[role] == null:
+		txExplo[role] = ImageTexture.new()
+		txExplo[role].load(tileExplo[role])
+	# and perform the assignment to the surface_material
+	spatial_material.albedo_texture=txExplo[role]
+	lExplos[who] = mi
+	# add the newly created instance as a child of the Origine3D Node
+#	$Spatial.add_child(mi)
+#	return mi
+
+func buildMaze(etage):
+	print("construction du terrain")
+	for i in range(global.map_size):
+		for j in range(global.map_size):
+			maze[etage][i][j] = load("res://Game/Room/Room.tscn").instance()
+			maze[etage][i][j].set_translation(Vector3(j*roomOff, 0, i*roomOff))
+			$Maze.add_child(maze[etage][i][j])
+
+func getPlayerX(player):
+	var p = lExplos[player]
+	var x = (p.translation.z - lOffsetExplo[player][1]) / (2*roomOff)
+	#print("player[",player,"].X = ",x)
+	return x
+
+func getPlayerY(player):
+	var p = lExplos[player]
+	var y = (p.translation.x - lOffsetExplo[player][0]) / (2*roomOff)
+	#print("player[",player,"].Y = ",y)
+	return y

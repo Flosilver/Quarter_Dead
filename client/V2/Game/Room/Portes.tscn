@@ -1,0 +1,102 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://obj/PorteDroite.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://obj/PorteGauche.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://Game/Room/VitreTx.tres" type="Material" id=3]
+[ext_resource path="res://Game/Room/CadreVitreTx.tres" type="Material" id=4]
+[ext_resource path="res://Game/Room/PortesGaucheTx.tres" type="Material" id=5]
+[ext_resource path="res://obj/Vitre.obj" type="ArrayMesh" id=6]
+[ext_resource path="res://obj/PorteVerre.obj" type="ArrayMesh" id=7]
+[ext_resource path="res://Game/Room/Portes.gd" type="Script" id=8]
+[ext_resource path="res://Game/Room/PortesDroiteTx.tres" type="Material" id=9]
+
+[sub_resource type="Animation" id=1]
+resource_name = "open_doors"
+tracks/0/type = "value"
+tracks/0/path = NodePath("PorteGauche:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 0, 0, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("PorteDroite:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 0, 0, -1 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "open_glass"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Vitre:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( -0.2, 0, 0 ), Vector3( -0.2, 2, 0 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "close_glass"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Vitre:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( -0.2, 2, 0 ), Vector3( -0.2, 0, 0 ) ]
+}
+
+[node name="Portes" type="Spatial"]
+script = ExtResource( 8 )
+
+[node name="PorteGauche" type="MeshInstance" parent="."]
+mesh = ExtResource( 2 )
+material/0 = ExtResource( 5 )
+
+[node name="PorteDroite" type="MeshInstance" parent="."]
+mesh = ExtResource( 1 )
+material/0 = ExtResource( 9 )
+
+[node name="Vitre" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 2, 0 )
+
+[node name="CadreVitre" type="MeshInstance" parent="Vitre"]
+mesh = ExtResource( 7 )
+material/0 = ExtResource( 4 )
+
+[node name="Vitre" type="MeshInstance" parent="Vitre"]
+mesh = ExtResource( 6 )
+material/0 = ExtResource( 3 )
+
+[node name="OpenDoors" type="AnimationPlayer" parent="."]
+anims/open_doors = SubResource( 1 )
+
+[node name="OpenGlass" type="AnimationPlayer" parent="."]
+anims/open_glass = SubResource( 2 )
+
+[node name="CloseGlass" type="AnimationPlayer" parent="."]
+anims/close_glass = SubResource( 3 )
+[connection signal="animation_finished" from="OpenDoors" to="." method="_on_OpenDoors_animation_finished"]
+[connection signal="animation_finished" from="OpenGlass" to="." method="_on_OpenGlass_animation_finished"]
+[connection signal="animation_finished" from="CloseGlass" to="." method="_on_CloseGlass_animation_finished"]

@@ -165,9 +165,18 @@ void Quarter_Dead::disconnect(int dir){
     nbConnectes--;
 }
 
-void Quarter_Dead::write_Info_Update_Mess(char* dest, int dir){
+void Quarter_Dead::write_Connection_Mess(){
+    // c<North_connected?><East_connected?><South_connected?><West_connected?>
+    int cnx[NB_J_MAX];
+    for ( int i=0 ; i<NB_J_MAX ; i++ ){
+        cnx[i] = players[i]->isConnected() ? 1 : 0;
+    }
+    sprintf(mess, "c%d%d%d%d", cnx[0], cnx[1], cnx[2], cnx[3]);
+}
+
+void Quarter_Dead::write_Info_Update_Mess(int dir){
     // i<dir><etage><hp><nbChauss>
-    sprintf(dest, "i %d %d %d %d", dir, players[dir]->getEtage(), players[dir]->getHP(), players[dir]->getNbChauss());
+    sprintf(mess, "i %d %d %d %d", dir, players[dir]->getEtage(), players[dir]->getHP(), players[dir]->getNbChauss());
 }
 
 void Quarter_Dead::handleIncomingMessage(){
@@ -191,7 +200,8 @@ void Quarter_Dead::handleIncomingMessage(){
 				if (!isConnected(dir))
 				{
 					connect(dir);
-                    sprintf(mess, "c%d", dir);
+                    //sprintf(mess, "c%d", dir);
+                    write_Connection_Mess();
                     sendBroadcast(mess);
 				}
 
@@ -242,10 +252,21 @@ void Quarter_Dead::handleIncomingMessage(){
                         players[i]->giveRole(roles[i]);
 
                         // premier envoie des infos
-                        write_Info_Update_Mess(mess,i);
+                        write_Info_Update_Mess(i);
                         sendBroadcast(mess);
                     }
                 }
+            }
+            if (recMess[0]=='D'){
+                cout << "--- Demande de déconnection" << endl;
+				dir = recMess[1]-'0'; // ascii to int
+                if (isConnected(dir))
+				{
+					disconnect(dir);
+                    //sprintf(mess, "c%d", dir);
+                    write_Connection_Mess();
+                    sendBroadcast(mess);
+				}
             }
             break;
 
@@ -357,7 +378,7 @@ void Quarter_Dead::handleIncomingMessage(){
                                 sendBroadcast(mess);
                                 
                                 // update des infos
-                                write_Info_Update_Mess(mess, dir);
+                                write_Info_Update_Mess(dir);
                                 sendBroadcast(mess);
                             }
                             // si le joueur a survécu au piège on update ses infos
@@ -367,7 +388,7 @@ void Quarter_Dead::handleIncomingMessage(){
                                 sendBroadcast(mess);
 
                                 // update des infos
-                                write_Info_Update_Mess(mess, dir);
+                                write_Info_Update_Mess(dir);
                                 sendBroadcast(mess);
                             }
                             // sinon on indique a tout le monde sa mort
@@ -407,7 +428,7 @@ void Quarter_Dead::handleIncomingMessage(){
                             players[dir]->pickUpShoe(maze[etage][pos.x][pos.y]);
 
                             // construction du message
-                            write_Info_Update_Mess(mess, dir);
+                            write_Info_Update_Mess(dir);
                             sendBroadcast(mess);
 
                             break;
