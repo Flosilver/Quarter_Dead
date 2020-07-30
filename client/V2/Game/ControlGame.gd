@@ -141,7 +141,6 @@ func _networkMessage(mess):
 							idr += 1
 					if etage == global.level:
 						buildMaze(etage)
-					buildMaze(etage)
 				
 				'p':	# placement des pions
 					var y = int(mess[1])
@@ -170,6 +169,9 @@ func _networkMessage(mess):
 					if ( mess[1] == 'y' ):
 						var who = int(mess[2])
 						var wich = int(mess[3])
+						print("who: ", who, "\twich: ", wich)
+						print("player: x=", lExplos[who].translation.z, "\ty=", lExplos[who].translation.x)
+						print("fonction: x=", getPlayerX(who), "\ty=", getPlayerY(who))
 						maze[global.level][getPlayerX(who)][getPlayerY(who)].open_door(wich)
 						match wich:
 							0:
@@ -237,12 +239,12 @@ func buildMaze(etage):
 
 func getPlayerX(player):
 	var p = lExplos[player]
-	var x = (p.translation.z - lOffsetExplo[player][1]) / (2*roomOff)
+	var x = (p.translation.z - lOffsetExplo[player][1]) / (roomOff)
 	#print("player[",player,"].X = ",x)
 	return x
 
 func getPlayerY(player):
 	var p = lExplos[player]
-	var y = (p.translation.x - lOffsetExplo[player][0]) / (2*roomOff)
+	var y = (p.translation.x - lOffsetExplo[player][0]) / (roomOff)
 	#print("player[",player,"].Y = ",y)
 	return y

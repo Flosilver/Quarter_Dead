@@ -13,13 +13,16 @@ func _ready():
 #	pass
 
 func open_doors():
-	$OpenDoors.play()
+#	$PorteGauche.set_translation(Vector3(0,0,1))
+#	$PorteDroite.set_translation(Vector3(0,0,-1))
+	$OpenDoors.play("open_doors")
 
 func open_glass():
-	$OpenGlass.play()
+#	$Vitre.set_translation(Vector3(0,2,0))
+	$OpenGlass.play("open_glass")
 
 func close_glass():
-	$CloseGlass.play()
+	$CloseGlass.play("close_glass")
 
 func ban():
 	var new_spatial_material = load("res://Game/Room/PortesGaucheBannedTx.tres")
@@ -34,4 +37,5 @@ func _on_OpenGlass_animation_finished(anim_name):
 
 
 func _on_CloseGlass_animation_finished(anim_name):
+#	$Vitre.set_translation(Vector3(0,0,0))
 	emit_signal("anim_doors_finished")

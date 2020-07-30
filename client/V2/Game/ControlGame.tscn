@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Game/ControlGame.gd" type="Script" id=1]
-[ext_resource path="res://Game/Camera.gd" type="Script" id=2]
+[ext_resource path="res://Game/Cam.gd" type="Script" id=2]
 [ext_resource path="res://Game/Info/Etage.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Game/Info/Chaussure.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Game/Info/Health.tscn" type="PackedScene" id=5]
@@ -15,10 +15,10 @@ __meta__ = {
 }
 
 [node name="Cam" type="Spatial" parent="."]
+script = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="Cam"]
 transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0, -1 )
-script = ExtResource( 2 )
 
 [node name="OmniLight" type="OmniLight" parent="Cam/Camera"]
 
