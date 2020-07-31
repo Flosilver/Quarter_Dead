@@ -4,7 +4,8 @@ var next_scene
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	$FadeIn.show()
+	$FadeIn.fade_out()
 #	for button in $Menu/VBoxContainer/Buttons.get_children():
 #		if button != $Menu/VBoxContainer/Buttons/TestReseauButton:
 #			button.connect( "pressed", self, "_on_Button_pressed", [button.scene_to_load])
@@ -46,5 +47,9 @@ func _on_TestReseauButton_pressed():
 
 func _on_FadeIn_fade_finished():
 	$FadeIn.fade_out()
-	$FadeIn.hide()
+#	$FadeIn.hide()
 	global.change_scene(next_scene)
+
+
+func _on_FadeIn_fade_out_finished():
+	$FadeIn.hide()

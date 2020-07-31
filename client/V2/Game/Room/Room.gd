@@ -20,7 +20,15 @@ func open_door(dir):
 			$Piece/PortesOuest.open_doors()
 
 func ban_door(dir):
-	print("ban_door(dir): TODO")
+	match dir:
+		0:
+			$Piece/PortesNord.ban()
+		1:
+			$Piece/PortesEst.ban()
+		2:
+			$Piece/PortesSud.ban()
+		3:
+			$Piece/PortesOuest.ban()
 
 func open_glass():
 	for portes in $Piece.get_children():

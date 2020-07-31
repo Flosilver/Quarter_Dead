@@ -52,6 +52,6 @@ custom_fonts/font = ExtResource( 2 )
 text = "Back"
 
 [node name="FadeIn" parent="." instance=ExtResource( 5 )]
-visible = false
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Button" to="." method="_on_Button_pressed"]
 [connection signal="fade_finished" from="FadeIn" to="." method="_on_FadeIn_fade_finished"]
+[connection signal="fade_out_finished" from="FadeIn" to="." method="_on_FadeIn_fade_out_finished"]

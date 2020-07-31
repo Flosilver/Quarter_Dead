@@ -79,3 +79,4 @@ By: F. BEROUJON - Y. POULIQUEN"
 visible = false
 [connection signal="pressed" from="CenterContainer/VBoxContainer/PlayButton" to="." method="_on_PlayButton_pressed"]
 [connection signal="fade_finished" from="FadeIn" to="." method="_on_FadeIn_fade_finished"]
+[connection signal="fade_out_finished" from="FadeIn" to="." method="_on_FadeIn_fade_out_finished"]

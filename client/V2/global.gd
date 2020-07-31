@@ -9,6 +9,7 @@ var controlConnexionNode
 var controlGameNode
 var controlOptionsNode
 var controlSplashNode
+var controlEndNode
 var direction
 var serverAddress
 
@@ -32,6 +33,7 @@ func _ready():
 	controlGameNode=null
 	controlOptionsNode=null
 	controlSplashNode=null
+	controlEndNode=null
 	nb_etages = 0
 	map_size = 0
 	etat = 0

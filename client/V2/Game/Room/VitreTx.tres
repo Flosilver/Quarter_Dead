@@ -3,4 +3,4 @@
 [resource]
 flags_transparent = true
 vertex_color_use_as_albedo = true
-albedo_color = Color( 0, 0.929412, 1, 0.509804 )
+albedo_color = Color( 0, 0.929412, 1, 0.188235 )

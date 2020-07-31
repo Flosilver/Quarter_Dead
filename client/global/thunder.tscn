@@ -5,7 +5,7 @@
 [ext_resource path="res://tiles/Texture/textureBobine1.0.png" type="Texture" id=3]
 
 [sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0, 0.505319, 1 )
+offsets = PoolRealArray( 0, 0.515957, 0.994681 )
 colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0.317647, 1, 1, 1, 0.266667 )
 
 [sub_resource type="GradientTexture" id=2]

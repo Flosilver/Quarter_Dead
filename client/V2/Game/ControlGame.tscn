@@ -18,7 +18,7 @@ __meta__ = {
 script = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="Cam"]
-transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0, -1 )
+transform = Transform( 1, 0, 0, 0, 0.978148, 0.207912, 0, -0.207912, 0.978148, 0, 0, -1 )
 
 [node name="OmniLight" type="OmniLight" parent="Cam/Camera"]
 

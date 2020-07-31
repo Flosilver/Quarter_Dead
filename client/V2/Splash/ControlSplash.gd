@@ -3,10 +3,14 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	$FadeIn.show()
+	$FadeIn.fade_out()
+	global.controlSplashNode = get_tree().get_root().get_child(1)
 	global.controlMenuNode = load("res://Menu/ControlMenu.tscn").instance()
 	global.controlConnexionNode = load("res://Connexion/ControlConnexion.tscn").instance()
 	global.controlGameNode=load("res://Game/ControlGame.tscn").instance()
 	global.controlOptionsNode = load("res://Options/ControlOpions.tscn").instance()
+	global.controlEndNode = load("res://End/ControlEnd.tscn").instance()
 	
 	var f=File.new()
 	f.open("user://direction.txt", File.READ)
@@ -21,10 +25,12 @@ func _ready():
 	global.serverAddress=content.strip_edges()
 	print("serverAddress={",global.serverAddress,"}")
 	
+	print ("controlSplashNode=",global.controlSplashNode)
 	print ("controlMenuNode=",global.controlMenuNode)
 	print ("controlConnexionNode=", global.controlConnexionNode)
 	print ("controlGameNode=",global.controlGameNode)
 	print ("controlOptionsNode=",global.controlOptionsNode)
+	print ("controlEndNode=",global.controlEndNode)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
@@ -35,5 +41,10 @@ func _on_PlayButton_pressed():
 	$FadeIn.fade_in()
 
 func _on_FadeIn_fade_finished():
+	$FadeIn.fade_out()
 	global.change_scene(global.controlMenuNode)
 	global.controlMenuNode.installNetworkCallback()
+
+
+func _on_FadeIn_fade_out_finished():
+	$FadeIn.hide()

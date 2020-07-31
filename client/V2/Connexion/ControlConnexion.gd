@@ -6,7 +6,8 @@ var new_player = [null, null, null, null]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	$FadeIn.show()
+	$FadeIn.fade_out()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -54,32 +55,35 @@ func _on_MenuPrincipalButton_pressed():
 
 func _on_FadeIn_fade_finished():
 	$FadeIn.fade_out()
-	$FadeIn.hide()
+#	$FadeIn.hide()
 	global.change_scene(next_scene)
 
+func _on_FadeIn_fade_out_finished():
+	$FadeIn.hide()
 
 func _on_ButtonC1_pressed():
 	if global.playersPresent[1] == 0:
 		var connectMessage="C"+str(1)
 		global.mplayer.send_bytes(connectMessage.to_ascii())
-	else:
-		var disconnectMessage = "D" + str(1)
-		global.mplayer.send_bytes(disconnectMessage.to_ascii())
+#	else:
+#		var disconnectMessage = "D" + str(1)
+#		global.mplayer.send_bytes(disconnectMessage.to_ascii())
 
 
 func _on_ButtonC2_pressed():
 	if global.playersPresent[2] == 0:
 		var connectMessage="C"+str(2)
 		global.mplayer.send_bytes(connectMessage.to_ascii())
-	else:
-		var disconnectMessage = "D" + str(2)
-		global.mplayer.send_bytes(disconnectMessage.to_ascii())
+#	else:
+#		var disconnectMessage = "D" + str(2)
+#		global.mplayer.send_bytes(disconnectMessage.to_ascii())
 
 
 func _on_ButtonC3_pressed():
 	if global.playersPresent[3] == 0:
 		var connectMessage="C"+str(3)
 		global.mplayer.send_bytes(connectMessage.to_ascii())
-	else:
-		var disconnectMessage = "D" + str(3)
-		global.mplayer.send_bytes(disconnectMessage.to_ascii())
+#	else:
+#		var disconnectMessage = "D" + str(3)
+#		global.mplayer.send_bytes(disconnectMessage.to_ascii())
+

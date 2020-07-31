@@ -109,7 +109,7 @@ void Quarter_Dead::generateMaze(){
             //cout << "placement aléatoire du goal" << endl;
             int randj = rand() % MAP_SIZE;
             int randk = rand() % MAP_SIZE;
-            maze[i][randj][randk] = make_shared<Room>(Goal());
+            maze[i][randj][randk] = make_shared<Goal>(Goal());
             vGoal = Vect2i(randj, randk);
             //cout << "Goal placé en: " << vGoal << endl;
         }
@@ -189,6 +189,8 @@ void Quarter_Dead::handleIncomingMessage(){
     Vect2i vtemp;   // vecteur 2d d'entiers temporaire
     int vise = 0;    // direction que vise le joueur envoyant un message pour son action
     int etage = 0;
+    sp_Room sp_room;
+    shared_ptr<Trap> sp_trap;
 
     switch (state){
         case CONNECTION:
@@ -274,8 +276,11 @@ void Quarter_Dead::handleIncomingMessage(){
             dir = recMess[1]-'0'; // ascii to int
             pos = players[dir]->getPawnPosition();  // position du joueur qui demande l'action
             etage = players[dir]->getEtage();
+            sp_room = maze[etage][pos.x][pos.y];
             //cout << "position du joueur: " << pos << endl;
-
+            if (!players[dir]->isConnected()){
+                break;
+            }
             switch( recMess[0] ){
 
                 // Demande d'ouverture de porte
@@ -302,7 +307,7 @@ void Quarter_Dead::handleIncomingMessage(){
                     //cout << "position de la salle visée: " << vtemp << endl;
 
                     // salle inaccessible pour l'action
-                    if (temp < 0 || temp >= MAP_SIZE || maze[etage][pos.x][pos.y]->isDoorOpen(vise)){
+                    if (temp < 0 || temp >= MAP_SIZE || sp_room->isDoorOpen(vise)){
                         sprintf(mess, "on");
                         sendBroadcast(mess);
                     }
@@ -312,7 +317,7 @@ void Quarter_Dead::handleIncomingMessage(){
                         sendBroadcast(mess);
 
                         // ouverture de la porte visée
-                        maze[etage][pos.x][pos.y]->openDoor(vise);
+                        sp_room->openDoor(vise);
                         // ouverture de la porte correspondante dans la nouvelle salle
                         maze[etage][vtemp.x][vtemp.y]->openDoor((vise+2)%4);
                     }
@@ -341,8 +346,8 @@ void Quarter_Dead::handleIncomingMessage(){
 
                     //cout << "position de la salle visée: " << vtemp << endl;
 
-                    //deplacement impossible = indices impossibles / porte visée fermée / porte vitrée de l'autre coté fermée
-                    if (temp < 0 || temp >= MAP_SIZE || !maze[etage][pos.x][pos.y]->isDoorOpen(vise) || !maze[etage][vtemp.x][vtemp.y]->isVitreOpen()){
+                    //deplacement impossible = indices impossibles / porte visée fermée / portes vitrées fermées
+                    if (temp < 0 || temp >= MAP_SIZE || !sp_room->isDoorOpen(vise) || !sp_room->isVitreOpen() || !maze[etage][vtemp.x][vtemp.y]->isVitreOpen()){
                         sprintf(mess, "en");
                         sendBroadcast(mess);
                     }
@@ -361,17 +366,31 @@ void Quarter_Dead::handleIncomingMessage(){
                 // indique que le joueur est effectivement dans la salle où il est entrée
                 case 'I':
                     // faire que le joueur visite la salle
-                    cout << "le joueur visite la pièce" << "\ttype: " << maze[etage][pos.x][pos.y]->getType() << endl;
+                    cout << "le joueur visite la pièce" << "\ttype: " << sp_room->getType() << endl;
                     // la visite met à jour les données du joueur
-                    switch (players[dir]->visite(maze[etage][pos.x][pos.y])){
+                    switch (players[dir]->visite(sp_room)){
                         case 1: // TRAP ou FATAL non activé
                             cout << "c'est un piège" << endl;
                             
-                            // on indique au client de fermer les portes vitrées
+                            // on indique aux clients de fermer les portes vitrées
                             sprintf(mess, "vc%d%d%d", etage, pos.x, pos.y);
                             sendBroadcast(mess);
 
-                            // Fatal + en vie -> resurection de l'Homme chat
+                            if ( sp_room->getType() == room_t::TRAP ){
+                                // on cast pour récupérer l'élément du trap
+                                sp_trap = dynamic_pointer_cast<Trap>(sp_room);
+
+                                // on indique aux joueur qu'une trap a été activé
+                                sprintf(mess, "t%d%d%d%d", etage, pos.x, pos.y, sp_trap->getElement());
+                                sendBroadcast(mess);
+                            }
+                            else{
+                                // on indique aux joueur qu'une fatal a été activé
+                                sprintf(mess, "f%d%d%d%d", etage, pos.x, pos.y, rand()%2);
+                                sendBroadcast(mess);
+                            }
+
+                            /*// Fatal + en vie -> resurection de l'Homme chat
                             if ( maze[etage][pos.x][pos.y]->getType() == room_t::FATAL && players[dir]->isAlive() ){
                                 // message de resurection du joueur
                                 sprintf(mess, "s%d", dir);
@@ -397,7 +416,7 @@ void Quarter_Dead::handleIncomingMessage(){
                                 while (players[dir]->throwShoe(maze[etage][pos.x][pos.y]) && maze[etage][pos.x][pos.y]->getType() != room_t::FATAL){}   // les chaussures tombent dans la salle si celle-ci n'est pas Fatal
                                 sprintf(mess, "m%d", dir);
                                 sendBroadcast(mess);
-                            }
+                            }*/
 
                             break;
                         
@@ -411,7 +430,7 @@ void Quarter_Dead::handleIncomingMessage(){
                                 sendBroadcast(mess);
 
                                 // Changement d'état
-                                //setState(state_t::END);
+                                setState(state_t::END);
                             }
                             // sinon, le joueur monte d'un niveau
                             else{
@@ -425,17 +444,58 @@ void Quarter_Dead::handleIncomingMessage(){
                         
                         default: // tout le reste
                             cout << "il ne se passe rien" << endl;
-                            players[dir]->pickUpShoe(maze[etage][pos.x][pos.y]);
+                            //players[dir]->pickUpShoe(maze[etage][pos.x][pos.y]);
 
                             // construction du message
                             write_Info_Update_Mess(dir);
                             sendBroadcast(mess);
-
                             break;
                     }
                     
 
                     // créer le message avec les updates de hp, chaussure, etc...
+                    break;
+                
+                case 'R':   // le jeux indique que le joueur est libéré du piège
+                    // on rouvre les portes vitrées de la pièce dans laquelle le joueur est coincé
+                    maze[etage][pos.x][pos.y]->openVitre();
+
+                    // on envoie l'ordre de rouvrir les vitres coté client
+                    sprintf(mess, "vo%d%d%d", etage, pos.x, pos.y);
+                    sendBroadcast(mess);
+
+                    // Fatal + en vie -> resurection de l'Homme chat
+                    if ( maze[etage][pos.x][pos.y]->getType() == room_t::FATAL && players[dir]->isAlive() ){
+                        // message de resurection du joueur
+                        sprintf(mess, "s%d", dir);
+                        sendBroadcast(mess);
+                        
+                        // update des infos
+                        write_Info_Update_Mess(dir);
+                        sendBroadcast(mess);
+                    }
+                    else if ( players[dir]->isAlive() ){
+                        // update des infos
+                        write_Info_Update_Mess(dir);
+                        sendBroadcast(mess);
+                    }
+                    // sinon on indique a tout le monde sa mort
+                    else{
+                        // toutes ses chaussures sont dispersées dans la salle
+                        while (players[dir]->throwShoe(maze[etage][pos.x][pos.y]) && maze[etage][pos.x][pos.y]->getType() != room_t::FATAL){}   // les chaussures tombent dans la salle si celle-ci n'est pas Fatal
+                        sprintf(mess, "m%d", dir);
+                        sendBroadcast(mess);
+                    }
+
+                    break;
+                
+                case 'D':   // un joueur est mort et se déconnecte
+                    cout << "--- Demande de déconnection" << endl;
+                    dir = recMess[1]-'0'; // ascii to int
+                    if (isConnected(dir))
+                    {
+                        disconnect(dir);
+                    }
                     break;
                 
                 default:
@@ -445,7 +505,11 @@ void Quarter_Dead::handleIncomingMessage(){
             break;
 
         case END:
-
+            cout << "--- fin du jeu ---" << endl;
+            for (int i=0 ; i<NB_J_MAX ; i++){
+                disconnect(i);
+            }
+            setState(state_t::CONNECTION);
             break;
 
         default:

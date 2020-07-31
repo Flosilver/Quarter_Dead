@@ -135,3 +135,4 @@ visible = false
 [connection signal="pressed" from="ButtonC2" to="." method="_on_ButtonC2_pressed"]
 [connection signal="pressed" from="ButtonC3" to="." method="_on_ButtonC3_pressed"]
 [connection signal="fade_finished" from="FadeIn" to="." method="_on_FadeIn_fade_finished"]
+[connection signal="fade_out_finished" from="FadeIn" to="." method="_on_FadeIn_fade_out_finished"]

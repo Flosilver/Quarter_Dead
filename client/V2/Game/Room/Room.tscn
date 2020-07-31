@@ -22,6 +22,6 @@ material/0 = SubResource( 1 )
 
 [node name="PortesEst" parent="Piece" instance=ExtResource( 5 )]
 
-[node name="PortesOuest" parent="Piece" instance=ExtResource( 1 )]
-
 [node name="PortesSud" parent="Piece" instance=ExtResource( 6 )]
+
+[node name="PortesOuest" parent="Piece" instance=ExtResource( 1 )]

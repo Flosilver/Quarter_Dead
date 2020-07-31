@@ -1,0 +1,73 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://obj/Canon.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://Game/Trap&Fatal/Canon.gd" type="Script" id=2]
+[ext_resource path="res://tiles/Game/Texture/textureCanon.png" type="Texture" id=3]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_texture = ExtResource( 3 )
+
+[sub_resource type="SphereMesh" id=2]
+radius = 0.08
+height = 0.16
+
+[sub_resource type="SpatialMaterial" id=3]
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+albedo_color = Color( 0.0627451, 0.0627451, 0.0627451, 1 )
+
+[sub_resource type="Animation" id=4]
+resource_name = "launch"
+length = 5.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Canon:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 2.8, 0, 2.5 ), Vector3( 0, 0, 2.5 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Canon:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 3, 4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 0, 0, 0 ), Vector3( 0, -90, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Canon/boulet:translation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 4, 4.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0.5, 0 ), Vector3( 0, 0.5, 0 ), Vector3( -5.8, 0.5, 0 ) ]
+}
+
+[node name="Canon" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="Canon" type="MeshInstance" parent="."]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 2.5 )
+mesh = ExtResource( 1 )
+material/0 = SubResource( 1 )
+
+[node name="boulet" type="MeshInstance" parent="Canon"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8, 0.5, 0 )
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="launch" type="AnimationPlayer" parent="."]
+anims/launch = SubResource( 4 )

@@ -169,28 +169,114 @@ func _networkMessage(mess):
 					if ( mess[1] == 'y' ):
 						var who = int(mess[2])
 						var wich = int(mess[3])
-						print("who: ", who, "\twich: ", wich)
-						print("player: x=", lExplos[who].translation.z, "\ty=", lExplos[who].translation.x)
-						print("fonction: x=", getPlayerX(who), "\ty=", getPlayerY(who))
-						maze[global.level][getPlayerX(who)][getPlayerY(who)].open_door(wich)
+						if lExplos[who] != null:
+							print("who: ", who, "\twich: ", wich)
+							print("player: x=", lExplos[who].translation.z, "\ty=", lExplos[who].translation.x)
+							print("fonction: x=", getPlayerX(who), "\ty=", getPlayerY(who))
+							maze[global.level][getPlayerX(who)][getPlayerY(who)].open_door(wich)
+							match wich:
+								0:
+									maze[global.level][getPlayerX(who)-1][getPlayerY(who)].open_door((wich+2)%4)
+								1:
+									maze[global.level][getPlayerX(who)][getPlayerY(who)+1].open_door((wich+2)%4)
+								2:
+									maze[global.level][getPlayerX(who)+1][getPlayerY(who)].open_door((wich+2)%4)
+								3:
+									maze[global.level][getPlayerX(who)][getPlayerY(who)-1].open_door((wich+2)%4)
+				'e': # deplacement dans une salle
+					if mess[1] ==  'y':
+						var who = int(mess[2])
+						var wich = int(mess[3])
+						var deplacement
 						match wich:
 							0:
-								maze[global.level][getPlayerX(who)-1][getPlayerY(who)].open_door((wich+2)%4)
+								deplacement = Vector3(0,0,-roomOff)
 							1:
-								maze[global.level][getPlayerX(who)][getPlayerY(who)+1].open_door((wich+2)%4)
+								deplacement = Vector3(roomOff,0,0)
 							2:
-								maze[global.level][getPlayerX(who)+1][getPlayerY(who)].open_door((wich+2)%4)
+								deplacement = Vector3(0,0,roomOff)
 							3:
-								maze[global.level][getPlayerX(who)][getPlayerY(who)-1].open_door((wich+2)%4)
+								deplacement = Vector3(-roomOff,0,0)
+						if lExplos[who] != null:
+							lExplos[who].translation += deplacement
+							lTargets[who] = lExplos[who].translation
+							print("target: ", lTargets[who])
+		#				lExplos[who].translation.x += deplacement.x
+		#				lExplos[who].translation.y += deplacement.y
+		#				lExplos[who].translation.z += deplacement.z
+						if who == global.direction:
+#							var cam = get_tree().get_root().get_node("ControlGame").get_node("Spatial").get_node("Camera")
+							var t = lTargets[who]
+							t.x -= lOffsetExplo[who][0]
+							t.y = 1.6
+							t.z -= lOffsetExplo[who][1]
+							$Cam.setTarget(t)
 				
 				'i':	# reception d'infos
+					# on sépare la chaine de charactere reçu pour identifier les infos
 					var mess_array = mess.rsplit(" ",true)
-					#0: i,	1: dir,	2: etage,	3: hp,	4: nbChauss
+					# 0: i,	1: dir,	2: etage,	3: hp,	4: nbChauss
 					if int(mess_array[1]) == global.direction:
 						$Cam/InfoScreen/Etage.set_text(mess_array[2])
 						$Cam/InfoScreen/Health.set_text(mess_array[3])
 						$Cam/InfoScreen/Chaussure.set_text(mess_array[4])
 						global.level = int(mess_array[2])
+				
+				'v':	# ordre de bouger les portes vitrées
+					var etage = int(mess[2])
+					var v_room = Vector2(int(mess[3]), int(mess[4]))
+					if mess[1] == 'c':
+						maze[etage][v_room.x][v_room.y].close_glass()
+					if mess[1] == 'o':
+						maze[etage][v_room.x][v_room.y].open_glass()
+				 
+				't':	# un joueur est tombé dans un piège
+					var etage = int(mess[1])
+					var v_room = Vector2(int(mess[2]), int(mess[3]))
+					var trap
+					var path = "res://Game/Trap&Fatal/Trap" + mess[4] + ".tscn"
+					trap = load(path).instance()
+					maze[etage][v_room.x][v_room.y].add_child(trap)
+					trap.connect("trap_anim_finished", self, "_on_trap_anim_finished")
+				
+				'f':	# un joueur est tombé dans un fatal
+					var etage = int(mess[1])
+					var v_room = Vector2(int(mess[2]), int(mess[3]))
+					var trap
+					var path = "res://Game/Trap&Fatal/Fatal" + mess[4] + ".tscn"
+					trap = load(path).instance()
+					maze[etage][v_room.x][v_room.y].add_child(trap)
+					trap.connect("trap_anim_finished", self, "_on_trap_anim_finished")
+				
+				'm':	# un joueur est mort
+					dir = int(mess[1])
+					lExplos = null
+					if dir == global.direction:
+						global.change_scene(global.controlEndNode)
+						global.controlEndNode.set_text("Vous etes mort")
+					else:
+						var info_mess = "Le joueur " + str(dir) + " est mort"
+						var node_mess = load("res://Game/Info/Message.tscn").instance()
+						node_mess.set_text(info_mess)
+						$Cam/InfoScreen.add_child(node_mess)
+				
+				's':	# un joueur a ressucité
+					dir = int(mess[1])
+					var info_mess
+					var node_mess
+					if dir == global.direction:
+						info_mess = "Vous ressucitez"
+					else:
+						info_mess = "Le joueur " + str(dir) + " ressucite"
+					node_mess = load("res://Game/Info/Message.tscn").instance()
+					node_mess.set_text(info_mess)
+					$Cam/InfoScreen.add_child(node_mess)
+				
+				'w':	# un joueur a gagné
+					global.etat = 2
+					for i in range(global.NB_J):
+						global.change_scene(global.controlEndNode)
+						global.controlEndNode.set_text("VICTOIRE")
 
 func add_player(num):
 	print("ajout ingame du joueur: ", num)
@@ -233,8 +319,19 @@ func buildMaze(etage):
 	print("construction du terrain")
 	for i in range(global.map_size):
 		for j in range(global.map_size):
-			maze[etage][i][j] = load("res://Game/Room/Room.tscn").instance()
+			if maze[etage][i][j] != 5:
+				maze[etage][i][j] = load("res://Game/Room/Room.tscn").instance()
+			else:
+				maze[etage][i][j] = load("res://Game/Room/Goal.tscn").instance()
 			maze[etage][i][j].set_translation(Vector3(j*roomOff, 0, i*roomOff))
+			if i == 0:
+				maze[etage][i][j].ban_door(0)
+			if i == global.map_size-1:
+				maze[etage][i][j].ban_door(2)
+			if j == 0:
+				maze[etage][i][j].ban_door(3)
+			if j == global.map_size-1:
+				maze[etage][i][j].ban_door(1)
 			$Maze.add_child(maze[etage][i][j])
 
 func getPlayerX(player):
@@ -248,3 +345,7 @@ func getPlayerY(player):
 	var y = (p.translation.x - lOffsetExplo[player][0]) / (roomOff)
 	#print("player[",player,"].Y = ",y)
 	return y
+
+func _on_trap_anim_finished():
+	var releaseMess = 'R' + str(global.direction)
+	global.mplayer.send_bytes(releaseMess.to_ascii())

@@ -76,3 +76,4 @@ margin_bottom = -2.7207
 [connection signal="pressed" from="Menu/VBoxContainer/Buttons/OptionsButton" to="." method="_on_OptionsButton_pressed"]
 [connection signal="pressed" from="Menu/VBoxContainer/Buttons/TestReseauButton" to="." method="_on_TestReseauButton_pressed"]
 [connection signal="fade_finished" from="FadeIn" to="." method="_on_FadeIn_fade_finished"]
+[connection signal="fade_out_finished" from="FadeIn" to="." method="_on_FadeIn_fade_out_finished"]
