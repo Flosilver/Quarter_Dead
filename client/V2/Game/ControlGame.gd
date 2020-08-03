@@ -72,7 +72,7 @@ var lOffsetExplo=[
 
 # liste contenant les pointeurs vers les 4 mesh des joueurs
 var lExplos=[null,null,null,null]
-
+var lPosExplos = [null, null, null, null]
 #var campx
 #var campy
 var pressed=[0,0,0,0,0,
@@ -89,12 +89,27 @@ var lTargets = [null,null,null,null]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _process(delta):
+	for i in range(global.NB_J):
+		if lTargets[i] != null and lExplos[i] != null:
+			var dep = (lTargets[i] - lExplos[i].translation)
+			if abs(dep.x) >= 0.1:
+#				print("deplacement en x")
+				lExplos[i].translation.x += 0.1 * (abs(dep.x)/dep.x)
+			else:
+				lExplos[i].translation.x = lTargets[i].x
+#			if dep.y != 0:
+#				lExplos[i].translation.y += (dep.y / roomOff) / 10
+			if abs(dep.z) >= 0.1:
+#				print("deplacement en z")
+				lExplos[i].translation.z += 0.1 * (abs(dep.z)/dep.z)
+			else:
+				lExplos[i].translation.z = lTargets[i].z
+
 
 func _networkMessage(mess):
 	print ("_networkMessage=",mess)
@@ -160,6 +175,7 @@ func _networkMessage(mess):
 						ytemp = lExplos[i].translation.y
 						ztemp = lExplos[i].translation.z
 						createExplorer(xtemp,ztemp,i,int(mess[i+1]))
+						lPosExplos[i] = Vector3(xtemp, ytemp, ztemp)
 						lExplos[i].set_translation(Vector3(xtemp,ytemp,ztemp))
 					global.etat = 1
 					connexion_node.start_game()
@@ -169,6 +185,7 @@ func _networkMessage(mess):
 					if ( mess[1] == 'y' ):
 						var who = int(mess[2])
 						var wich = int(mess[3])
+						var etage = int(mess[4])
 						if lExplos[who] != null:
 							print("who: ", who, "\twich: ", wich)
 							print("player: x=", lExplos[who].translation.z, "\ty=", lExplos[who].translation.x)
@@ -198,8 +215,8 @@ func _networkMessage(mess):
 							3:
 								deplacement = Vector3(-roomOff,0,0)
 						if lExplos[who] != null:
-							lExplos[who].translation += deplacement
-							lTargets[who] = lExplos[who].translation
+#							lExplos[who] += deplacement
+							lTargets[who] = lExplos[who].translation + deplacement
 							print("target: ", lTargets[who])
 		#				lExplos[who].translation.x += deplacement.x
 		#				lExplos[who].translation.y += deplacement.y
@@ -222,31 +239,44 @@ func _networkMessage(mess):
 						$Cam/InfoScreen/Chaussure.set_text(mess_array[4])
 						global.level = int(mess_array[2])
 				
+				'l':	# lancé de chaussure
+					match mess[1]:
+						'y':
+							dir = int(mess[2])
+							var etage = int(mess[3])
+							if etage == global.level:
+								var chauss = load("res://Game/ShoeThrow.tscn").instance()
+								chauss.rotation.y -= PI/2 * global.vise
+								maze[etage][getPlayerX(dir)][getPlayerY(dir)].add_child(chauss)
+				
 				'v':	# ordre de bouger les portes vitrées
 					var etage = int(mess[2])
-					var v_room = Vector2(int(mess[3]), int(mess[4]))
-					if mess[1] == 'c':
-						maze[etage][v_room.x][v_room.y].close_glass()
-					if mess[1] == 'o':
-						maze[etage][v_room.x][v_room.y].open_glass()
+					if etage == global.level:
+						var v_room = Vector2(int(mess[3]), int(mess[4]))
+						if mess[1] == 'c':
+							maze[etage][v_room.x][v_room.y].close_glass()
+						if mess[1] == 'o':
+							maze[etage][v_room.x][v_room.y].open_glass()
 				 
 				't':	# un joueur est tombé dans un piège
 					var etage = int(mess[1])
-					var v_room = Vector2(int(mess[2]), int(mess[3]))
-					var trap
-					var path = "res://Game/Trap&Fatal/Trap" + mess[4] + ".tscn"
-					trap = load(path).instance()
-					maze[etage][v_room.x][v_room.y].add_child(trap)
-					trap.connect("trap_anim_finished", self, "_on_trap_anim_finished")
+					if etage == global.level:
+						var v_room = Vector2(int(mess[2]), int(mess[3]))
+						var trap
+						var path = "res://Game/Trap&Fatal/Trap" + mess[4] + ".tscn"
+						trap = load(path).instance()
+						maze[etage][v_room.x][v_room.y].add_child(trap)
+						trap.connect("trap_anim_finished", self, "_on_trap_anim_finished", [mess[1], mess[2], mess[3]])
 				
 				'f':	# un joueur est tombé dans un fatal
 					var etage = int(mess[1])
-					var v_room = Vector2(int(mess[2]), int(mess[3]))
-					var trap
-					var path = "res://Game/Trap&Fatal/Fatal" + mess[4] + ".tscn"
-					trap = load(path).instance()
-					maze[etage][v_room.x][v_room.y].add_child(trap)
-					trap.connect("trap_anim_finished", self, "_on_trap_anim_finished")
+					if etage == global.level:
+						var v_room = Vector2(int(mess[2]), int(mess[3]))
+						var trap
+						var path = "res://Game/Trap&Fatal/Fatal" + mess[4] + ".tscn"
+						trap = load(path).instance()
+						maze[etage][v_room.x][v_room.y].add_child(trap)
+						trap.connect("trap_anim_finished", self, "_on_trap_anim_finished", [mess[1], mess[2], mess[3]])
 				
 				'm':	# un joueur est mort
 					dir = int(mess[1])
@@ -274,9 +304,9 @@ func _networkMessage(mess):
 				
 				'w':	# un joueur a gagné
 					global.etat = 2
-					for i in range(global.NB_J):
-						global.change_scene(global.controlEndNode)
-						global.controlEndNode.set_text("VICTOIRE")
+					end_game()
+					global.change_scene(global.controlEndNode)
+					global.controlEndNode.set_text("VICTOIRE")
 
 func add_player(num):
 	print("ajout ingame du joueur: ", num)
@@ -338,14 +368,18 @@ func getPlayerX(player):
 	var p = lExplos[player]
 	var x = (p.translation.z - lOffsetExplo[player][1]) / (roomOff)
 	#print("player[",player,"].X = ",x)
-	return x
+	return int(x)
 
 func getPlayerY(player):
 	var p = lExplos[player]
 	var y = (p.translation.x - lOffsetExplo[player][0]) / (roomOff)
 	#print("player[",player,"].Y = ",y)
-	return y
+	return int(y)
 
-func _on_trap_anim_finished():
-	var releaseMess = 'R' + str(global.direction)
+func _on_trap_anim_finished(etage, roomX, roomY):
+	var releaseMess = 'R' + etage + roomX + roomY #str(global.direction)
 	global.mplayer.send_bytes(releaseMess.to_ascii())
+
+
+func end_game():
+	print("the end")

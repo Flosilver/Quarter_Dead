@@ -22,6 +22,7 @@ class Goal : public Room
 
         /* Methodes */
         const int activate(Joueur& j);
+        const int trigger();
 };
 
 #endif

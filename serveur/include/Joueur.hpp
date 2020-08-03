@@ -36,14 +36,16 @@ class Joueur : public Player
         const Vect2i& getPawnPosition() const;
         const int& getNbChauss() const;
         const int& getEtage() const;
+        const bool hasShoe() const;
 
         /* Methodes */
         void receiveDMG(int dmg);
         void giveRole(int r);
         const int visite(sp_Room& spr);
-        const bool throwShoe(sp_Room& spr);
+        const int throwShoe(sp_Room& spr);
         const bool pickUpShoe(sp_Room& spr);
         void climb();
+        const bool isInside(const Vect2i& room_pos) const;
 
         void movePawn(const Vect2i& v);
         void movePawnTo(const Vect2i& v);

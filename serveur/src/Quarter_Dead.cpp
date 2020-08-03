@@ -313,7 +313,7 @@ void Quarter_Dead::handleIncomingMessage(){
                     }
                     // salle accessible pour l'action
                     else{
-                        sprintf(mess, "oy%d%d", dir, vise);
+                        sprintf(mess, "oy%d%d%d", dir, vise, etage);
                         sendBroadcast(mess);
 
                         // ouverture de la porte visée
@@ -363,6 +363,85 @@ void Quarter_Dead::handleIncomingMessage(){
                     }
                     break;
                 
+                // indqiue que le joueur a lancer une chaussure dans une salle
+                case 'L':
+                    cout << "Le joueur veut lancer une chaussure" << endl;
+                    
+                    vise = recMess[2]-'0';                  // où vise le joueur pour son action
+
+                    if (vise%2 == 0){
+                        // position de la salle visée
+                        vtemp.x = pos.x + mouvements[vise].x;
+                        vtemp.y = pos.y;
+
+                        // recupération de la coordonnée changeante
+                        temp = vtemp.x;
+                    }
+                    else{
+                        // position de la salle vise
+                        vtemp.x = pos.x;
+                        vtemp.y = pos.y + mouvements[vise].y;
+
+                        // récupération de la coordonnée changeante
+                        temp = vtemp.y;
+                    }
+
+                    // on test d'abord si la porte visée est ouverte
+                    if ( !sp_room->isDoorOpen(vise) ){
+                        sprintf(mess, "ln%d", dir);
+                        sendBroadcast(mess);
+                        break;
+                    }
+
+                    // on test ce qu'il se passe
+                    switch (players[dir]->throwShoe(maze[etage][vtemp.x][vtemp.y])){
+                        case -1:
+                            // le joueur n'a pas de chaussure
+                            sprintf(mess, "ln%d", dir);
+                            sendBroadcast(mess);
+                            break;
+                        
+                        case 0:
+                            // le joueur a des chaussures
+                            sprintf(mess, "ly%d%d", dir, etage);
+                            sendBroadcast(mess);
+
+                            // et c'est tout car il ne passe rien
+                            break;
+                        
+                        case 1:
+                            // le joueur a activer un piège ou un fatal
+                            sprintf(mess, "ly%d%d", dir, etage);
+                            sendBroadcast(mess);
+                            
+                            // on indique aux clients de fermer les portes vitrées
+                            sprintf(mess, "vc%d%d%d", etage, vtemp.x, vtemp.y);
+                            sendBroadcast(mess);
+
+                            if ( maze[etage][vtemp.x][vtemp.y]->getType() == room_t::TRAP ){
+                                // on cast pour récupérer l'élément du trap
+                                sp_trap = dynamic_pointer_cast<Trap>(maze[etage][vtemp.x][vtemp.y]);
+
+                                // on indique aux joueur qu'une trap a été activé
+                                sprintf(mess, "t%d%d%d%d", etage, vtemp.x, vtemp.y, sp_trap->getElement());
+                                sendBroadcast(mess);
+                            }
+                            else{
+                                // on indique aux joueur qu'une fatal a été activé
+                                sprintf(mess, "f%d%d%d%d", etage, vtemp.x, vtemp.y, rand()%2);
+                                sendBroadcast(mess);
+                            }
+
+                            break;
+                        
+                        default:
+                            cerr << "***ERROR : PLayer::throwShoe() : unexpected return value" << endl;
+                            break;
+                    }
+                    write_Info_Update_Mess(dir);
+                    sendBroadcast(mess);
+                    break;
+                
                 // indique que le joueur est effectivement dans la salle où il est entrée
                 case 'I':
                     // faire que le joueur visite la salle
@@ -389,34 +468,6 @@ void Quarter_Dead::handleIncomingMessage(){
                                 sprintf(mess, "f%d%d%d%d", etage, pos.x, pos.y, rand()%2);
                                 sendBroadcast(mess);
                             }
-
-                            /*// Fatal + en vie -> resurection de l'Homme chat
-                            if ( maze[etage][pos.x][pos.y]->getType() == room_t::FATAL && players[dir]->isAlive() ){
-                                // message de resurection du joueur
-                                sprintf(mess, "s%d", dir);
-                                sendBroadcast(mess);
-                                
-                                // update des infos
-                                write_Info_Update_Mess(dir);
-                                sendBroadcast(mess);
-                            }
-                            // si le joueur a survécu au piège on update ses infos
-                            else if ( players[dir]->isAlive() ){
-                                // information sur l'élément du Trap pour adapter l'animation
-                                sprintf(mess, "t%d%d", pos.x, pos.y);
-                                sendBroadcast(mess);
-
-                                // update des infos
-                                write_Info_Update_Mess(dir);
-                                sendBroadcast(mess);
-                            }
-                            // sinon on indique a tout le monde sa mort
-                            else{
-                                // toutes ses chaussures sont dispersées dans la salle
-                                while (players[dir]->throwShoe(maze[etage][pos.x][pos.y]) && maze[etage][pos.x][pos.y]->getType() != room_t::FATAL){}   // les chaussures tombent dans la salle si celle-ci n'est pas Fatal
-                                sprintf(mess, "m%d", dir);
-                                sendBroadcast(mess);
-                            }*/
 
                             break;
                         
@@ -458,33 +509,50 @@ void Quarter_Dead::handleIncomingMessage(){
                 
                 case 'R':   // le jeux indique que le joueur est libéré du piège
                     // on rouvre les portes vitrées de la pièce dans laquelle le joueur est coincé
-                    maze[etage][pos.x][pos.y]->openVitre();
+                    //sp_room->openVitre();
+                    etage = recMess[1] - '0';
+                    pos.x = recMess[2] - '0';
+                    pos.y = recMess[3] - '0';
+                    sp_room = maze[etage][pos.x][pos.y];
+
 
                     // on envoie l'ordre de rouvrir les vitres coté client
-                    sprintf(mess, "vo%d%d%d", etage, pos.x, pos.y);
-                    sendBroadcast(mess);
+                    if (!sp_room->isVitreOpen()){
+                        sp_room->openVitre();
+                        sprintf(mess, "vo%d%d%d", etage, pos.x, pos.y);
+                        sendBroadcast(mess);
+                    }
 
-                    // Fatal + en vie -> resurection de l'Homme chat
-                    if ( maze[etage][pos.x][pos.y]->getType() == room_t::FATAL && players[dir]->isAlive() ){
-                        // message de resurection du joueur
-                        sprintf(mess, "s%d", dir);
-                        sendBroadcast(mess);
-                        
-                        // update des infos
-                        write_Info_Update_Mess(dir);
-                        sendBroadcast(mess);
-                    }
-                    else if ( players[dir]->isAlive() ){
-                        // update des infos
-                        write_Info_Update_Mess(dir);
-                        sendBroadcast(mess);
-                    }
-                    // sinon on indique a tout le monde sa mort
-                    else{
-                        // toutes ses chaussures sont dispersées dans la salle
-                        while (players[dir]->throwShoe(maze[etage][pos.x][pos.y]) && maze[etage][pos.x][pos.y]->getType() != room_t::FATAL){}   // les chaussures tombent dans la salle si celle-ci n'est pas Fatal
-                        sprintf(mess, "m%d", dir);
-                        sendBroadcast(mess);
+                    for (int i=0 ; i<NB_J_MAX ; i++){
+                        // on vérifie si un joueur est dans la salle qui vient d'être activée
+                        if (players[i]->isInside(pos) && players[i]->isConnected()){
+                            dir = i;
+                            // Fatal + en vie -> resurection de l'Homme chat
+                            if ( sp_room->getType() == room_t::FATAL && players[dir]->isAlive() ){
+                                // message de resurection du joueur
+                                sprintf(mess, "s%d", dir);
+                                sendBroadcast(mess);
+                                
+                                // update des infos
+                                write_Info_Update_Mess(dir);
+                                sendBroadcast(mess);
+                            }
+                            else if ( players[dir]->isAlive() ){
+                                // update des infos
+                                write_Info_Update_Mess(dir);
+                                sendBroadcast(mess);
+                            }
+                            // sinon on indique a tout le monde sa mort
+                            else{
+                                // toutes ses chaussures sont dispersées dans la salle
+                                while (players[dir]->hasShoe() && sp_room->getType() != room_t::FATAL){
+                                    // les chaussures tombent dans la salle si celle-ci n'est pas Fatal
+                                    players[dir]->throwShoe(sp_room);
+                                }
+                                sprintf(mess, "m%d", dir);
+                                sendBroadcast(mess);
+                            }
+                        }
                     }
 
                     break;

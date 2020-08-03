@@ -84,6 +84,8 @@ transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 1.5, 3,
 mesh = SubResource( 10 )
 material/0 = null
 
+[node name="Players" type="Spatial" parent="."]
+
 [node name="MenuPrincipalButton" type="Button" parent="."]
 margin_right = 12.0
 margin_bottom = 20.0

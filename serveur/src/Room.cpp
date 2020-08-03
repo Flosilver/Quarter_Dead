@@ -47,6 +47,10 @@ const bool Room::hasShoe() const{
 
 /* Methode called when a Joueur visite a Room*/
 const int Room::activate(Joueur& j){
+    return trigger();
+}
+
+const int Room::trigger(){
     visited = true;
     return 0;   // il ne se passe rien
 }

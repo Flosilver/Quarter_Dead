@@ -8,11 +8,7 @@ var new_player = [null, null, null, null]
 func _ready():
 	$FadeIn.show()
 	$FadeIn.fade_out()
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+	
 
 func add_new_player(num):	
 	print("ajout du player: ", num)
@@ -50,12 +46,15 @@ func _on_MenuPrincipalButton_pressed():
 	
 	var disconnectMessage = "D" + str(global.direction)
 	global.mplayer.send_bytes(disconnectMessage.to_ascii())
-	
 
 
 func _on_FadeIn_fade_finished():
 	$FadeIn.fade_out()
 #	$FadeIn.hide()
+	if next_scene == global.controlGameNode:
+		for i in range(global.NB_J):
+			$Scene.remove_child(new_player[i])
+			new_player[i] = null
 	global.change_scene(next_scene)
 
 func _on_FadeIn_fade_out_finished():

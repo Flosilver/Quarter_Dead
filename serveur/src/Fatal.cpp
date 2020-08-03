@@ -23,7 +23,17 @@ const int Fatal::activate(Joueur& j){
     if (j.getRole() == role_t::Homme_chat){
         j.giveRole(role_t::Homme_chat2);
     }
-
+    nbChauss = 0;
     visited = true;
     return 1;   // il se passe qqchose
+}
+
+const int Fatal::trigger(){
+    nbChauss = 0;
+    if (!isVisited()){
+        closeVitre();
+        visited = true;
+        return 1;   // il se passe qqchose
+    }
+    return 0;    
 }

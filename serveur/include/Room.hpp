@@ -35,6 +35,7 @@ class Room
 
         /* Methodes */
         virtual const int activate(Joueur& j);
+        virtual const int trigger();
         void receiveShoe();
         void giveShoe();
         void openDoor(int dir);

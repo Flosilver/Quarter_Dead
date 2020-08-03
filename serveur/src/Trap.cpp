@@ -92,3 +92,12 @@ const int Trap::activate(Joueur& j){
     visited = true;
     return 1;   // il se passe qqchose
 }
+
+const int Trap::trigger(){
+    if (!visited){
+        closeVitre();
+        visited = true;
+        return 1;   // il se passe qqchose
+    }
+    return 0;
+}

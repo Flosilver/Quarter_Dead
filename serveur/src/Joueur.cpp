@@ -70,6 +70,10 @@ const int& Joueur::getEtage() const{
     return etage;
 }
 
+const bool Joueur::hasShoe() const{
+    return nbChauss > 0; 
+}
+
 void Joueur::receiveDMG(int dmg){
     hp -= dmg;
 }
@@ -165,13 +169,13 @@ const int Joueur::visite(sp_Room& spr){
     }*/
 }
 
-const bool Joueur::throwShoe(sp_Room& spr){
-    if (nbChauss > 0){
+const int Joueur::throwShoe(sp_Room& spr){
+    if (nbChauss > 0 && spr->isVitreOpen()){
         nbChauss--;
         spr->receiveShoe();
-        return true;
+        return spr->trigger();
     }
-    return false;
+    return -1;      // le joueur n'a pas de chaussure
 }
 
 const bool Joueur::pickUpShoe(sp_Room& spr){
@@ -185,6 +189,10 @@ const bool Joueur::pickUpShoe(sp_Room& spr){
 
 void Joueur::climb(){
     etage++;
+}
+
+const bool Joueur::isInside(const Vect2i& room_pos) const{
+    return (getPawnPosition().x == room_pos.x && getPawnPosition().y == room_pos.y);
 }
 
 void Joueur::movePawn(const Vect2i& v){

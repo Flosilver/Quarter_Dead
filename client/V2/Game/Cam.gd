@@ -42,13 +42,13 @@ func _process(delta):
 			if (global.vise < 0 ):
 				global.vise += 4
 				
-		if abs(xAxis1)>0.6:
-#			print("axis 2 : ", xAxis1)
-			translation.x+=delta * xAxis1 * coef / 2
-#			nodeDialog.hide()
-		if abs(zAxis1) > 0.6:
-#			print("axis 3 : ", zAxis1)
-			translation.z+=delta * zAxis1 * coef / 2
+#		if abs(xAxis1)>0.6:
+##			print("axis 2 : ", xAxis1)
+#			translation.x+=delta * xAxis1 * coef / 2
+##			nodeDialog.hide()
+#		if abs(zAxis1) > 0.6:
+##			print("axis 3 : ", zAxis1)
+#			translation.z+=delta * zAxis1 * coef / 2
 		
 		if Input.is_joy_button_pressed(0,JOY_BUTTON_0) and pressed[0]==0 and mouvR+mouvT == 0:
 			pressed[0] = 1
@@ -78,15 +78,25 @@ func _process(delta):
 			pressed[2] = 0
 			print("X released")
 		
-		if Input.is_joy_button_pressed(0,JOY_BUTTON_4) and pressed[4]==0:
-#			pressed[4]=1
-#			print ("5 pressed")
-			translation.y -= delta * coef / 2
-
-		if Input.is_joy_button_pressed(0,JOY_BUTTON_5) and pressed[5]==0:
-#			pressed[5]=1
-#			print ("6 pressed")
-			translation.y += delta * coef / 2
+		if Input.is_joy_button_pressed(0,JOY_BUTTON_6) and pressed[6] == 0:
+			pressed[6] = 1
+			print("LT pressed")
+			if mouvT + mouvR == 0:
+				var throwShoeMess = "L" + str(global.direction) + str(global.vise)
+				global.mplayer.send_bytes(throwShoeMess.to_ascii())
+		if !Input.is_joy_button_pressed(0,JOY_BUTTON_6) and pressed[6] == 1:
+			pressed[6] = 0
+			print("LT released")
+			
+#		if Input.is_joy_button_pressed(0,JOY_BUTTON_4) and pressed[4]==0:
+##			pressed[4]=1
+##			print ("5 pressed")
+#			translation.y -= delta * coef / 2
+#
+#		if Input.is_joy_button_pressed(0,JOY_BUTTON_5) and pressed[5]==0:
+##			pressed[5]=1
+##			print ("6 pressed")
+#			translation.y += delta * coef / 2
 
 func pivot():
 	if (abs(angle - angle_dest) > seuil):
