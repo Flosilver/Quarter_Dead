@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://animation/ChaussureGauche.glb" type="PackedScene" id=1]
+
+[node name="ChaussureGauche" instance=ExtResource( 1 )]
+
+[node name="Armature" parent="." index="0"]
+transform = Transform( 0.0931412, -0.00155105, -0.0363637, -0.0351601, 0.0219873, -0.0909963, 0.00940681, 0.0975405, 0.0199339, 0.682529, 0.115646, 4.96056 )
