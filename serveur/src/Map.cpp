@@ -27,7 +27,7 @@ Map::~Map(){
         map[i].clear();
     }
     map.clear();
-    //cout << "\t***dest Map" << endl;
+    cout << "\t***dest Map" << endl;
 }
 
 Map& Map::operator=(const Map& m){

@@ -1,8 +1,8 @@
 extends Spatial
 
 
-var coef=15.0
-var seuil = 0.01
+const coef=15.0
+const seuil = 0.01
 
 var gameNode = global.controlGameNode
 
@@ -130,3 +130,13 @@ func move():
 			mouvT = 0
 			var inMessage = "I" + str(global.direction)
 			global.mplayer.send_bytes(inMessage.to_ascii())
+
+
+func reboot_cam():
+	set_translation(Vector3(0,0,0))
+	set_rotation(Vector3(0,0,0))
+	angle = 0.0
+	angle_dest = 0.0
+	target = null
+	mouvR = 0
+	mouvT = 0

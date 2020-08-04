@@ -15,8 +15,9 @@ func _on_FadeIn_fade_finished():
 #	$FadeIn.hide()
 	global.change_scene(global.controlSplashNode)
 	
-	var disconnectMessage = "D" + str(global.direction)
-	global.mplayer.send_bytes(disconnectMessage.to_ascii())
+	for i in range(global.NB_J):
+		var disconnectMessage = "D" + str(i)
+		global.mplayer.send_bytes(disconnectMessage.to_ascii())
 
 
 func _on_FadeIn_fade_out_finished():

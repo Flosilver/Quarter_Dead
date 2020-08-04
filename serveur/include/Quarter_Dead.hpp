@@ -43,6 +43,8 @@ class Quarter_Dead : public rsc::Game
         void write_Connection_Mess();
         void write_Info_Update_Mess(int dir);
 
+        void reboot();
+
         /* Methodes de Game */
         void handleIncomingMessage();
 

@@ -72,7 +72,8 @@ var lOffsetExplo=[
 
 # liste contenant les pointeurs vers les 4 mesh des joueurs
 var lExplos=[null,null,null,null]
-var lPosExplos = [null, null, null, null]
+var lEtageExplos = [0,0,0,0]
+#var lPosExplos = [null, null, null, null]
 #var campx
 #var campy
 var pressed=[0,0,0,0,0,
@@ -80,6 +81,25 @@ var pressed=[0,0,0,0,0,
 	0,0,0,0,0,
 	0,0,0,0,0,
 	]
+	
+var roles = [
+	#00
+	"Acrobate",
+	#01
+	"Cordonnier",
+	#02
+	"Devin",
+	#03
+	"Healer",
+	#04
+	"Homme-chat",
+	#05
+	"Homme-chat2",
+	#06
+	"Robot",
+	#07
+	"Tank"
+]
 
 var maze
 const roomOff = 7
@@ -112,7 +132,7 @@ func _process(delta):
 
 
 func _networkMessage(mess):
-	print ("_networkMessage=",mess)
+	print ("\n_networkMessage=",mess)
 	var dir
 	match (global.etat):
 		0:	# CONNEXION des joueurs
@@ -134,7 +154,7 @@ func _networkMessage(mess):
 					global.nb_etages = int(mess[1])
 					global.map_size = int(mess[2])
 					maze = []
-					print("création de la map")
+					print("\ncréation de la map")
 					for i in range(global.nb_etages):
 						print("création de l'étage ", i)
 						maze.push_back([])
@@ -175,7 +195,9 @@ func _networkMessage(mess):
 						ytemp = lExplos[i].translation.y
 						ztemp = lExplos[i].translation.z
 						createExplorer(xtemp,ztemp,i,int(mess[i+1]))
-						lPosExplos[i] = Vector3(xtemp, ytemp, ztemp)
+						if i == global.direction:
+							$InfoScreen/Role_info/Role.set_text("role: " + roles[int(mess[i+1])] )
+#						lPosExplos[i] = Vector3(xtemp, ytemp, ztemp)
 						lExplos[i].set_translation(Vector3(xtemp,ytemp,ztemp))
 					global.etat = 1
 					connexion_node.start_game()
@@ -187,7 +209,7 @@ func _networkMessage(mess):
 						var wich = int(mess[3])
 						var etage = int(mess[4])
 						if lExplos[who] != null:
-							print("who: ", who, "\twich: ", wich)
+							print("\nwho: ", who, "\twich: ", wich)
 							print("player: x=", lExplos[who].translation.z, "\ty=", lExplos[who].translation.x)
 							print("fonction: x=", getPlayerX(who), "\ty=", getPlayerY(who))
 							maze[global.level][getPlayerX(who)][getPlayerY(who)].open_door(wich)
@@ -217,7 +239,7 @@ func _networkMessage(mess):
 						if lExplos[who] != null:
 #							lExplos[who] += deplacement
 							lTargets[who] = lExplos[who].translation + deplacement
-							print("target: ", lTargets[who])
+							print("\ntarget: ", lTargets[who])
 		#				lExplos[who].translation.x += deplacement.x
 		#				lExplos[who].translation.y += deplacement.y
 		#				lExplos[who].translation.z += deplacement.z
@@ -234,9 +256,9 @@ func _networkMessage(mess):
 					var mess_array = mess.rsplit(" ",true)
 					# 0: i,	1: dir,	2: etage,	3: hp,	4: nbChauss
 					if int(mess_array[1]) == global.direction:
-						$Cam/InfoScreen/Etage.set_text(mess_array[2])
-						$Cam/InfoScreen/Health.set_text(mess_array[3])
-						$Cam/InfoScreen/Chaussure.set_text(mess_array[4])
+						$InfoScreen/Etage.set_text(mess_array[2])
+						$InfoScreen/Health.set_text(mess_array[3])
+						$InfoScreen/Chaussure.set_text(mess_array[4])
 						global.level = int(mess_array[2])
 				
 				'l':	# lancé de chaussure
@@ -280,7 +302,8 @@ func _networkMessage(mess):
 				
 				'm':	# un joueur est mort
 					dir = int(mess[1])
-					lExplos = null
+					lExplos[dir] = null
+					remove_player(dir)
 					if dir == global.direction:
 						global.change_scene(global.controlEndNode)
 						global.controlEndNode.set_text("Vous etes mort")
@@ -288,7 +311,7 @@ func _networkMessage(mess):
 						var info_mess = "Le joueur " + str(dir) + " est mort"
 						var node_mess = load("res://Game/Info/Message.tscn").instance()
 						node_mess.set_text(info_mess)
-						$Cam/InfoScreen.add_child(node_mess)
+						$InfoScreen.add_child(node_mess)
 				
 				's':	# un joueur a ressucité
 					dir = int(mess[1])
@@ -300,7 +323,25 @@ func _networkMessage(mess):
 						info_mess = "Le joueur " + str(dir) + " ressucite"
 					node_mess = load("res://Game/Info/Message.tscn").instance()
 					node_mess.set_text(info_mess)
-					$Cam/InfoScreen.add_child(node_mess)
+					$InfoScreen.add_child(node_mess)
+				
+				'g':	# un joueur change d'etage
+					dir = int(mess[1])
+					var new_etage = int(mess[2])
+					var x = int(mess[3])
+					var y = int(mess[4])
+					lEtageExplos[dir] = new_etage
+					if dir == global.direction:
+						global.level = new_etage
+						buildMaze(global.level)
+						$Cam.set_translation(Vector3(y*roomOff,1.6,x*roomOff))
+					lExplos[dir].set_translation(Vector3((y*roomOff)+lOffsetExplo[dir][0],0,(x*roomOff)+lOffsetExplo[dir][1]))
+					lTargets[dir] = Vector3((y*roomOff)+lOffsetExplo[dir][0],0,(x*roomOff)+lOffsetExplo[dir][1])
+					for i in range(global.NB_J):
+						if lEtageExplos[i] != lEtageExplos[global.direction]:
+							lExplos[i].hide()
+						else:
+							lExplos[i].show()
 				
 				'w':	# un joueur a gagné
 					global.etat = 2
@@ -309,7 +350,7 @@ func _networkMessage(mess):
 					global.controlEndNode.set_text("VICTOIRE")
 
 func add_player(num):
-	print("ajout ingame du joueur: ", num)
+	print("\najout ingame du joueur: ", num)
 	var mi = MeshInstance.new()
 	$Players.add_child(mi)
 	lExplos[num] = mi
@@ -317,7 +358,8 @@ func add_player(num):
 func remove_player(num):
 	if lExplos[num] != null:
 		$Players.remove_child(lExplos[num])
-		lExplos[num] = null;
+		lExplos[num] = null
+		lTargets[num] = null
 
 func createExplorer(x,y,who,role):
 	# Create a new tile instance
@@ -346,6 +388,8 @@ func createExplorer(x,y,who,role):
 #	return mi
 
 func buildMaze(etage):
+	print("\nnettoyage du terrain")
+	destroy_maze()
 	print("construction du terrain")
 	for i in range(global.map_size):
 		for j in range(global.map_size):
@@ -381,5 +425,19 @@ func _on_trap_anim_finished(etage, roomX, roomY):
 	global.mplayer.send_bytes(releaseMess.to_ascii())
 
 
+func destroy_maze():
+	for child in $Maze.get_children():
+		$Maze.remove_child(child)
+
 func end_game():
-	print("the end")
+	print("\n\n----the end\n\n")
+	for i in range(global.NB_J):
+		global.playersPresent[i] = 0
+		remove_player(i)
+	destroy_maze()
+	global.map_size = 0
+	global.nb_etages = 0
+	global.level = 0
+	global.vise = 0
+	global.etat = 0
+	$Cam.reboot_cam()

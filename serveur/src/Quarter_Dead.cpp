@@ -179,6 +179,20 @@ void Quarter_Dead::write_Info_Update_Mess(int dir){
     sprintf(mess, "i %d %d %d %d", dir, players[dir]->getEtage(), players[dir]->getHP(), players[dir]->getNbChauss());
 }
 
+void Quarter_Dead::reboot(){
+    cout << "--- fin du jeu ---" << endl;
+    /*for (int i=0 ; i<NB_J_MAX ; i++){
+        disconnect(i);
+    }*/
+    nbConnectes = 0;
+    players.clear();
+    players = std::vector<sp_Joueur>(NB_J_MAX);
+    for (int i=0 ; i<NB_J_MAX ; i++){
+        players[i] = make_shared<Joueur>(Joueur(i));
+    }
+    setState(state_t::CONNECTION);
+}
+
 void Quarter_Dead::handleIncomingMessage(){
     cout << "état actuel: " << state << endl;
 
@@ -191,6 +205,7 @@ void Quarter_Dead::handleIncomingMessage(){
     int etage = 0;
     sp_Room sp_room;
     shared_ptr<Trap> sp_trap;
+    bool b = false;
 
     switch (state){
         case CONNECTION:
@@ -224,8 +239,10 @@ void Quarter_Dead::handleIncomingMessage(){
 
                     // Génération de la map
                     generateMaze();
-                    maze[0].print();
-                    cout << "spawn: " << spawns[0] << endl;
+                    for (int i=0 ; i<NB_ETAGES ; i++){
+                        maze[i].print();
+                        cout << "spawn: " << spawns[i] << endl;
+                    }
 
                     // Envoie des salles de chaque etage dans le code des joueurs
                     for (int i=0 ; i<NB_ETAGES ; i++){
@@ -434,6 +451,12 @@ void Quarter_Dead::handleIncomingMessage(){
 
                             break;
                         
+                        case 2:
+                            // le joueur lance dans la sortie
+                            sprintf(mess, "ly%d%d", dir, etage);
+                            sendBroadcast(mess);
+                            break;
+                        
                         default:
                             cerr << "***ERROR : PLayer::throwShoe() : unexpected return value" << endl;
                             break;
@@ -486,9 +509,14 @@ void Quarter_Dead::handleIncomingMessage(){
                             // sinon, le joueur monte d'un niveau
                             else{
                                 players[dir]->climb();
-
+                                temp = players[dir]->getEtage();
+                                players[dir]->movePawnTo(spawns[temp]);
                                 // message indiquant le changement d'étage d'un joueur
-                                sprintf(mess, "a%d", dir);
+                                sprintf(mess, "g%d%d%d%d", dir, temp, spawns[temp].x, spawns[temp].y);
+                                sendBroadcast(mess);
+
+                                // on met a jour les infos
+                                write_Info_Update_Mess(dir);
                                 sendBroadcast(mess);
                             }
                             break;
@@ -538,6 +566,11 @@ void Quarter_Dead::handleIncomingMessage(){
                                 sendBroadcast(mess);
                             }
                             else if ( players[dir]->isAlive() ){
+                                if (players[dir]->getRole() == role_t::Homme_chat2 && players[dir]->getHP() == 10){
+                                    // message de resurection du joueur
+                                    sprintf(mess, "s%d", dir);
+                                    sendBroadcast(mess);
+                                }
                                 // update des infos
                                 write_Info_Update_Mess(dir);
                                 sendBroadcast(mess);
@@ -573,11 +606,28 @@ void Quarter_Dead::handleIncomingMessage(){
             break;
 
         case END:
-            cout << "--- fin du jeu ---" << endl;
-            for (int i=0 ; i<NB_J_MAX ; i++){
-                disconnect(i);
+            if (recMess[0] == 'D'){
+                // déconnexion de fin de jeux
+                cout << "--- Deconnexion de fin de jeux" << endl;
+                dir = recMess[1] - '0'; // ascii to int
+                if (isConnected(dir))
+                {
+                    disconnect(dir);
+                }
+                cout << "j'arrive la?" << endl;
+                for (int i=0 ; i<NB_J_MAX ; i++){
+                    // on verifie si qqun est encore connecté
+                    if (players[i]->isConnected()){
+                        b = true;
+                    }
+                }
+                cout << b << endl;
+                // si tout le monde est déconnecté, on reboot le jeux
+                if(!b){
+                    reboot();
+                }
             }
-            setState(state_t::CONNECTION);
+            
             break;
 
         default:
