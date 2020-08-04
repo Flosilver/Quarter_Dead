@@ -333,6 +333,8 @@ func _networkMessage(mess):
 					lEtageExplos[dir] = new_etage
 					if dir == global.direction:
 						global.level = new_etage
+						$FadeIn.show()
+						$FadeIn.fade_in()
 						buildMaze(global.level)
 						$Cam.set_translation(Vector3(y*roomOff,1.6,x*roomOff))
 					lExplos[dir].set_translation(Vector3((y*roomOff)+lOffsetExplo[dir][0],0,(x*roomOff)+lOffsetExplo[dir][1]))
@@ -441,3 +443,7 @@ func end_game():
 	global.vise = 0
 	global.etat = 0
 	$Cam.reboot_cam()
+
+
+func _on_FadeIn_fade_finished():
+	$FadeIn.hide()
