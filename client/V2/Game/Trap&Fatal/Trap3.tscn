@@ -82,10 +82,10 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0.6 ),
-"transitions": PoolRealArray( 1 ),
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
 "update": 1,
-"values": [ true ]
+"values": [ false, true ]
 }
 
 [node name="Trap3" instance=ExtResource( 3 )]
@@ -108,3 +108,4 @@ draw_pass_1 = SubResource( 8 )
 
 [node name="bzzzz" type="AudioStreamPlayer3D" parent="." index="3"]
 stream = ExtResource( 5 )
+unit_db = 20.0

@@ -553,7 +553,7 @@ void Quarter_Dead::handleIncomingMessage(){
 
                     for (int i=0 ; i<NB_J_MAX ; i++){
                         // on vérifie si un joueur est dans la salle qui vient d'être activée
-                        if (players[i]->isInside(pos) && players[i]->isConnected()){
+                        if (players[i]->isInside(pos) && players[i]->isConnected() && players[i]->getEtage()==etage){
                             dir = i;
                             // Fatal + en vie -> resurection de l'Homme chat
                             if ( sp_room->getType() == room_t::FATAL && players[dir]->isAlive() ){
