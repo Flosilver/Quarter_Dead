@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/bobine.ogg-d0d76ea0ff1029d00cca2e6a070e7e1d.oggstr"
+
+[deps]
+
+source_file="res://Audio/bobine.ogg"
+dest_files=[ "res://.import/bobine.ogg-d0d76ea0ff1029d00cca2e6a070e7e1d.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

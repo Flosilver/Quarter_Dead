@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Canon.obj-839eb80eb5b1995eb4ca1a0e52dee527.mesh"
+
+[deps]
+
+files=[ "res://.import/Canon.obj-839eb80eb5b1995eb4ca1a0e52dee527.mesh" ]
+
+source_file="res://obj/Canon.obj"
+dest_files=[ "res://.import/Canon.obj-839eb80eb5b1995eb4ca1a0e52dee527.mesh", "res://.import/Canon.obj-839eb80eb5b1995eb4ca1a0e52dee527.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

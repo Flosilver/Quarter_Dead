@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/Chaussure.ogg-9392b1ad59813bc7876159088c35cd63.oggstr"
+
+[deps]
+
+source_file="res://Audio/Chaussure.ogg"
+dest_files=[ "res://.import/Chaussure.ogg-9392b1ad59813bc7876159088c35cd63.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

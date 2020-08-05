@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/Feu.ogg-11eb946664a4c6c7cef9127d3fd2e539.oggstr"
+
+[deps]
+
+source_file="res://Audio/Feu.ogg"
+dest_files=[ "res://.import/Feu.ogg-11eb946664a4c6c7cef9127d3fd2e539.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

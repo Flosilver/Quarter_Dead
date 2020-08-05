@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Vitre.obj-9d71ecd8f2654a1ecc90f1e4d53d13eb.mesh"
+
+[deps]
+
+files=[ "res://.import/Vitre.obj-9d71ecd8f2654a1ecc90f1e4d53d13eb.mesh" ]
+
+source_file="res://obj/Vitre.obj"
+dest_files=[ "res://.import/Vitre.obj-9d71ecd8f2654a1ecc90f1e4d53d13eb.mesh", "res://.import/Vitre.obj-9d71ecd8f2654a1ecc90f1e4d53d13eb.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

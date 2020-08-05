@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://obj/Piques.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://Game/Trap&Fatal/Pics.gd" type="Script" id=2]
 [ext_resource path="res://tiles/Game/Texture/texturePiques.png" type="Texture" id=3]
 [ext_resource path="res://Game/Trap&Fatal/Trap&Fatal.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Audio/Piques.ogg" type="AudioStream" id=5]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_texture = ExtResource( 3 )
@@ -23,14 +24,41 @@ tracks/0/keys = {
 "update": 0,
 "values": [ Vector3( 0, 5, 0 ), Vector3( 0, 1, 0 ), Vector3( 0, 1.3, 0 ), Vector3( 0, 1, 0 ) ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("../AudioStreamPlayer:stream")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.5 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ ExtResource( 5 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../AudioStreamPlayer:playing")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 1.3 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [node name="Fatal0" instance=ExtResource( 4 )]
 
 [node name="Pics" type="MeshInstance" parent="." index="0"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
 mesh = ExtResource( 1 )
 material/0 = SubResource( 1 )
 script = ExtResource( 2 )
 
 [node name="drop" type="AnimationPlayer" parent="Pics" index="0"]
 anims/drop = SubResource( 2 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." index="1"]
+stream = ExtResource( 5 )
