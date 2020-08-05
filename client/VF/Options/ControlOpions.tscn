@@ -1,0 +1,76 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://font/gameplay_32.tres" type="DynamicFont" id=1]
+[ext_resource path="res://font/gameovercre1_16.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Options/ControlOpions.gd" type="Script" id=3]
+[ext_resource path="res://tiles/background.png" type="Texture" id=4]
+[ext_resource path="res://FadeIn.tscn" type="PackedScene" id=5]
+
+[node name="ControlOpions" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+margin_left = 436.0
+margin_top = 233.0
+margin_right = 588.0
+margin_bottom = 367.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+margin_right = 152.0
+margin_bottom = 38.0
+custom_fonts/font = ExtResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 5
+text = "Options"
+
+[node name="CommandeButton" type="Button" parent="CenterContainer/VBoxContainer"]
+margin_top = 48.0
+margin_right = 152.0
+margin_bottom = 70.0
+rect_min_size = Vector2( 150, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "Commandes"
+
+[node name="ReglesButton" type="Button" parent="CenterContainer/VBoxContainer"]
+margin_top = 80.0
+margin_right = 152.0
+margin_bottom = 102.0
+custom_fonts/font = ExtResource( 2 )
+text = "Regles"
+
+[node name="BackButton" type="Button" parent="CenterContainer/VBoxContainer"]
+margin_top = 112.0
+margin_right = 152.0
+margin_bottom = 134.0
+custom_fonts/font = ExtResource( 2 )
+text = "Back"
+
+[node name="FadeIn" parent="." instance=ExtResource( 5 )]
+visible = false
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CommandeButton" to="." method="_on_CommandeButton_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/ReglesButton" to="." method="_on_ReglesButton_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/BackButton" to="." method="_on_BackButton_pressed"]
+[connection signal="fade_finished" from="FadeIn" to="." method="_on_FadeIn_fade_finished"]
+[connection signal="fade_out_finished" from="FadeIn" to="." method="_on_FadeIn_fade_out_finished"]

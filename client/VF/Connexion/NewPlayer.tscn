@@ -1,0 +1,20 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://obj/Personnage.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://tiles/Connexion/texturePersonnage.png" type="Texture" id=2]
+[ext_resource path="res://Connexion/NewPlayer.gd" type="Script" id=3]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_texture = ExtResource( 2 )
+
+[sub_resource type="QuadMesh" id=2]
+
+[node name="NewPlayer" type="MeshInstance"]
+mesh = ExtResource( 1 )
+material/0 = SubResource( 1 )
+script = ExtResource( 3 )
+
+[node name="name" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
+mesh = SubResource( 2 )
+material/0 = null

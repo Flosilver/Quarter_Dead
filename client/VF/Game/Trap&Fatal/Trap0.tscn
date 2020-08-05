@@ -1,0 +1,22 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Audio/Canon.ogg" type="AudioStream" id=1]
+[ext_resource path="res://Game/Trap&Fatal/Trap&Fatal.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Game/Trap&Fatal/CanonNord.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Game/Trap&Fatal/CanonEst.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Game/Trap&Fatal/CanonOuest.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Game/Trap&Fatal/CanonSud.tscn" type="PackedScene" id=7]
+
+[node name="Trap0" instance=ExtResource( 3 )]
+
+[node name="CanonNord" parent="." index="0" instance=ExtResource( 4 )]
+
+[node name="CanonEst" parent="." index="1" instance=ExtResource( 5 )]
+
+[node name="CanonSud" parent="." index="2" instance=ExtResource( 7 )]
+
+[node name="CanonOuest" parent="." index="3" instance=ExtResource( 6 )]
+
+[node name="shoot" type="AudioStreamPlayer3D" parent="." index="4"]
+stream = ExtResource( 1 )
+autoplay = true

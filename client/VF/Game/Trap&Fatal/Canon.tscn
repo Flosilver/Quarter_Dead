@@ -1,0 +1,115 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://obj/Canon.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://Game/Trap&Fatal/Canon.gd" type="Script" id=2]
+[ext_resource path="res://tiles/Game/Texture/textureCanon.png" type="Texture" id=3]
+[ext_resource path="res://tiles/Game/flame.png" type="Texture" id=4]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_texture = ExtResource( 3 )
+
+[sub_resource type="SphereMesh" id=2]
+radius = 0.08
+height = 0.16
+
+[sub_resource type="SpatialMaterial" id=3]
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+albedo_color = Color( 0.0627451, 0.0627451, 0.0627451, 1 )
+
+[sub_resource type="Gradient" id=4]
+offsets = PoolRealArray( 0, 0, 8.64391e-41, 0.0222222, 0.340741, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.984314, 0.984314, 0.984314, 0, 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
+
+[sub_resource type="Curve" id=6]
+_data = [ Vector2( 0, 0 ), 0.0, 11.9398, 0, 0, Vector2( 0.126582, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.341772, 0.904545 ), -1.82308, -1.82308, 0, 0, Vector2( 0.563291, 0.459091 ), -1.70568, -1.70568, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=7]
+curve = SubResource( 6 )
+
+[sub_resource type="ParticlesMaterial" id=8]
+gravity = Vector3( 0, 0, 0 )
+scale_curve = SubResource( 7 )
+color_ramp = SubResource( 5 )
+
+[sub_resource type="SpatialMaterial" id=9]
+flags_transparent = true
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_texture = ExtResource( 4 )
+
+[sub_resource type="QuadMesh" id=10]
+material = SubResource( 9 )
+
+[sub_resource type="Animation" id=11]
+length = 5.0
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("Canon:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.6, 0.7, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 0.366021, 4, 0.267943 ),
+"update": 0,
+"values": [ Vector3( 2, 4, 2 ), Vector3( 2, 4, 2 ), Vector3( 2, 0, 2 ), Vector3( 2, 0.2, 2 ), Vector3( 2, 0, 2 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Canon/boulet:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 2, 2.17, 2.54, 2.84 ),
+"transitions": PoolRealArray( 1, 1, 1, 0.329877, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0.5, 0 ), Vector3( 0, 0.5, 0 ), Vector3( -2.75, 0.45, 0 ), Vector3( -1, 0, 0 ), Vector3( -0.55, 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Canon/Particles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 2 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[node name="Canon" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="Canon" type="MeshInstance" parent="."]
+transform = Transform( 0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 2, 4, 2 )
+mesh = ExtResource( 1 )
+material/0 = SubResource( 1 )
+
+[node name="boulet" type="MeshInstance" parent="Canon"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="Particles" type="Particles" parent="Canon"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.22111, 0.51735, -0.0108261 )
+emitting = false
+amount = 1
+lifetime = 0.5
+one_shot = true
+visibility_aabb = AABB( -5.16553, -3.49658, -4, 8, 8, 8 )
+process_material = SubResource( 8 )
+draw_pass_1 = SubResource( 10 )
+
+[node name="launch" type="AnimationPlayer" parent="."]
+anims/launch = SubResource( 11 )
